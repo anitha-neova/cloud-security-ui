@@ -1,0 +1,9 @@
+openai
+weasyprint
+fpdf
+openpyxl
+reportlab
+pandas
+python-dotenv
+fastapi
+uvicorn
