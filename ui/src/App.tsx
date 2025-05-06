@@ -8,22 +8,24 @@ import NotFound from "./pages/NotFound";
 import CloudConnectionPage from "./pages/CloudConnectionPage";
 import CompliancePage from "./pages/CompliancePage";
 import ResourceCreationPage from "./pages/ResourceCreationPage";
-import { ProgressProvider } from "@/context/ProgressContext"; // 👈 import context
+import SupportPage from "./pages/SupportPage";
+import { ProgressProvider } from "@/context/ProgressContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <ProgressProvider> {/* 👈 Wrap here */}
-        <Toaster />
-        <Sonner />
+      <ProgressProvider>
+        <Toaster /> {/* Default notification system */}
+        <Sonner />  {/* Additional or alternative notification system */}
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/cloud-connect" element={<CloudConnectionPage />} />
             <Route path="/compliance" element={<CompliancePage />} />
             <Route path="/resource-creation" element={<ResourceCreationPage />} />
+            <Route path="/support" element={<SupportPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

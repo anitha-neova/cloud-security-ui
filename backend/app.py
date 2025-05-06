@@ -1,5 +1,7 @@
+import time
+
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 import logging
@@ -16,6 +18,7 @@ load_dotenv()
 # Initialize FastAPI app
 app = FastAPI()
 
+ticket_counter = 0
 # CORS settings
 origins = [
     "http://localhost:3000",  # React dev server
@@ -97,7 +100,7 @@ async def run_compliance_scan(request: ComplianceRequest):
 @app.get("/download_compliance_report/")
 async def download_compliance_report():
     pdf_path = "cis_compliance_report.pdf"  # generated PDF file
-    
+
     if not os.path.exists(pdf_path):
         raise HTTPException(status_code=404, detail="Compliance report PDF not found.")
 
@@ -111,7 +114,7 @@ async def download_compliance_report():
 @app.get("/download_compliance_xlsx/")
 async def download_compliance_xlsx():
     xlsx_path = "Compliance_Overview.xlsx"  # generated XLSX file
-    
+
     if not os.path.exists(xlsx_path):
         raise HTTPException(status_code=404, detail="Compliance overview XLSX not found.")
 
@@ -152,8 +155,47 @@ async def email_compliance_report(request: EmailRequest):
     except Exception as e:
         logging.error(f"Failed to send email: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to send email.")
-        
+
+
+@app.post("/support_email")
+async def support_email(
+    user_email: str = Form(...),
+    subject: str = Form(...),
+    message_body: str = Form(...)
+):
+    global ticket_counter
+    try:
+        # Generate ticket ID
+        ticket_counter += 1
+        timestamp = int(time.time())  # Epoch format
+        ticket_id = f"NEOTICKET-{ticket_counter}-{timestamp}"
+
+        # Format email
+        msg = EmailMessage()
+        msg["Subject"] = f"[{ticket_id}] {subject}"
+        msg["From"] = os.getenv("SMTP_USERNAME")
+        msg["To"] = os.getenv("SMTP_USERNAME")
+        msg["Reply-To"] = user_email
+        msg.set_content(
+            f"Support Ticket ID: {ticket_id}\n\nFrom: {user_email}\n\nQuery:\n{message_body}"
+        )
+
+        # Send email
+        with smtplib.SMTP(os.getenv("SMTP_SERVER"), int(os.getenv("SMTP_PORT"))) as smtp:
+            smtp.starttls()
+            smtp.login(os.getenv("SMTP_USERNAME"), os.getenv("SMTP_PASSWORD"))
+            smtp.send_message(msg)
+
+        return {
+            "message": "Support email sent successfully. Our team will get back to you soon.",
+            "ticket_id": ticket_id
+        }
+
+    except Exception as e:
+        logging.error(f"Failed to send email: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to send email.")
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+ 

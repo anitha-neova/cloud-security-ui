@@ -7,28 +7,44 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"; // Import tooltip
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useEffect, useState } from "react";
 
 const Header = () => {
   const navigate = useNavigate();
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove(theme === "light" ? "dark" : "light");
+    root.classList.add(theme);
+  }, [theme]);
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <img src="/logo-placeholder.svg" alt="Logo" className="h-8 w-8" />
-          
-          {/* Make the title clickable */}
+        {/* Left Side: Logo and Title */}
+        <div className="flex items-center space-x-20">
+          <img
+            src="/neova_solutions_logo.jpeg"
+            alt="Neova Solutions Logo"
+            className="h-24 w-auto" // Medium size logo
+          />
           <h1
-            className="font-bold text-xl cursor-pointer"
+            className="font-bold text-2xl cursor-pointer text-gray-900 dark:text-white"
             onClick={() => navigate("/")}
           >
-            CloudScribe
+            Cloud Compliance AI
           </h1>
         </div>
 
+        {/* Right Side: Header Buttons */}
         <div className="flex items-center space-x-2">
-          {/* Home Button with Tooltip */}
+          {/* Home Button */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
@@ -60,8 +76,14 @@ const Header = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Documentation</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuItem>
+                <a href="/guide.pdf" download className="w-full block">
+                  Documentation
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/support")}>
+                Support
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -73,9 +95,12 @@ const Header = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Theme</DropdownMenuItem>
-              <DropdownMenuItem>API Configuration</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("light")}>
+                Light Theme
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("dark")}>
+                Dark Theme
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -85,3 +110,4 @@ const Header = () => {
 };
 
 export default Header;
+ 
