@@ -1,10 +1,22 @@
 import { useState } from "react";
-import { Clock, ChevronRight, ChevronLeft, Home, Shield, BarChart } from "lucide-react";
+import {
+  Clock,
+  ChevronRight,
+  ChevronLeft,
+  Home,
+  Shield,
+  BarChart,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   promptHistory: string[];
@@ -12,12 +24,12 @@ interface SidebarProps {
 
 const Sidebar = ({ promptHistory }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   return (
     <div
       className={cn(
-        "border-r border-gray-200 bg-gray-50 transition-all duration-300 flex flex-col",
+        "border-r bg-gray-50 dark:bg-gray-900 dark:border-gray-700 transition-all duration-300 flex flex-col",
         collapsed ? "w-[60px]" : "w-[250px]"
       )}
     >
@@ -25,10 +37,14 @@ const Sidebar = ({ promptHistory }: SidebarProps) => {
         <Button
           variant="ghost"
           size="sm"
-          className="w-full justify-start"
+          className="w-full justify-start text-gray-800 dark:text-gray-200"
           onClick={() => setCollapsed(!collapsed)}
         >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          {collapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
           {!collapsed && <span className="ml-2">Collapse</span>}
         </Button>
       </div>
@@ -37,7 +53,7 @@ const Sidebar = ({ promptHistory }: SidebarProps) => {
         <TooltipProvider>
           <ul className="space-y-2">
             {[
-              { icon: Home, label: "Home", href: "/" }, // Link Home button to '/'
+              { icon: Home, label: "Home", href: "/" },
               { icon: BarChart, label: "Resources", href: "/resource-creation" },
               { icon: Shield, label: "Compliance", href: "/compliance" },
             ].map((item) => (
@@ -48,19 +64,22 @@ const Sidebar = ({ promptHistory }: SidebarProps) => {
                       variant="ghost"
                       size="sm"
                       className={cn(
-                        "w-full justify-start",
+                        "w-full justify-start text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700",
                         collapsed ? "px-2" : ""
                       )}
-                      onClick={() => navigate(item.href)} // Navigate on click
+                      onClick={() => navigate(item.href)}
                     >
-                      <item.icon className={cn("h-4 w-4", collapsed ? "mx-auto" : "mr-2")} />
+                      <item.icon
+                        className={cn(
+                          "h-4 w-4",
+                          collapsed ? "mx-auto" : "mr-2"
+                        )}
+                      />
                       {!collapsed && <span>{item.label}</span>}
                     </Button>
                   </TooltipTrigger>
                   {collapsed && (
-                    <TooltipContent side="right">
-                      {item.label}
-                    </TooltipContent>
+                    <TooltipContent side="right">{item.label}</TooltipContent>
                   )}
                 </Tooltip>
               </li>
@@ -72,18 +91,21 @@ const Sidebar = ({ promptHistory }: SidebarProps) => {
       {promptHistory.length > 0 && (
         <div
           className={cn(
-            "border-t border-gray-200 p-2",
+            "border-t p-2 border-gray-200 dark:border-gray-700",
             collapsed ? "hidden" : "block"
           )}
         >
-          <div className="flex items-center mb-2">
+          <div className="flex items-center mb-2 text-gray-800 dark:text-gray-200">
             <Clock className="h-4 w-4 mr-2" />
             <span className="text-sm font-medium">Prompt History</span>
           </div>
           <ScrollArea className="h-[200px]">
             <ul className="space-y-1">
               {promptHistory.map((prompt, index) => (
-                <li key={index} className="text-sm truncate p-1 hover:bg-gray-100 rounded">
+                <li
+                  key={index}
+                  className="text-sm truncate p-1 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                >
                   {prompt}
                 </li>
               ))}
@@ -96,3 +118,4 @@ const Sidebar = ({ promptHistory }: SidebarProps) => {
 };
 
 export default Sidebar;
+ 
