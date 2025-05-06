@@ -25,17 +25,17 @@ const Header = () => {
   }, [theme]);
 
   return (
-    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+    <header className="bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700 sticky top-0 z-10 shadow-sm">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Left Side: Logo and Title */}
         <div className="flex items-center space-x-20">
           <img
             src="/neova_solutions_logo.jpeg"
             alt="Neova Solutions Logo"
-            className="h-24 w-auto" // Medium size logo
+            className="h-24 w-auto rounded-md shadow-sm transition-transform hover:scale-105"
           />
           <h1
-            className="font-bold text-2xl cursor-pointer text-gray-900 dark:text-white"
+            className="font-bold text-2xl cursor-pointer text-blue-600 dark:text-blue-400"
             onClick={() => navigate("/")}
           >
             Cloud Compliance AI
@@ -47,8 +47,13 @@ const Header = () => {
           {/* Home Button */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
-                <Home className="h-5 w-5" />
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:hover:bg-gray-700"
+                onClick={() => navigate("/")}
+              >
+                <Home className="h-6 w-6" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -59,11 +64,15 @@ const Header = () => {
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:hover:bg-gray-700"
+              >
+                <Bell className="h-6 w-6" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-blue-100 dark:bg-gray-800">
               <DropdownMenuItem>No new notifications</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -71,11 +80,15 @@ const Header = () => {
           {/* Help */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <HelpCircle className="h-5 w-5" />
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:hover:bg-gray-700"
+              >
+                <HelpCircle className="h-6 w-6" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-blue-100 dark:bg-gray-800">
               <DropdownMenuItem>
                 <a href="/guide.pdf" download className="w-full block">
                   Documentation
@@ -90,11 +103,15 @@ const Header = () => {
           {/* Settings */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Settings className="h-5 w-5" />
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:hover:bg-gray-700"
+              >
+                <Settings className="h-6 w-6" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-blue-100 dark:bg-gray-800">
               <DropdownMenuItem onClick={() => setTheme("light")}>
                 Light Theme
               </DropdownMenuItem>
@@ -110,4 +127,3 @@ const Header = () => {
 };
 
 export default Header;
- 

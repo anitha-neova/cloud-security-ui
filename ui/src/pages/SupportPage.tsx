@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const SupportPage = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -63,32 +64,69 @@ const SupportPage = () => {
   };
 
   return (
-    <div className="relative max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-900 rounded shadow">
-      <div className="absolute top-4 right-4">
-        <Button variant="outline" size="sm" onClick={() => navigate("/")}>
+    <Card className="max-w-md mx-auto mt-10 bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
+      <CardHeader className="p-6 relative">
+        <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
+          Support
+        </CardTitle>
+        <CardDescription className="text-gray-600 dark:text-gray-400">
+          Submit a support ticket, and our team will get back to you soon.
+        </CardDescription>
+        <Button
+          variant="outline"
+          size="sm"
+          className="absolute top-4 right-4 border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 hover:scale-105"
+          onClick={() => navigate("/")}
+        >
           Go to Homepage
         </Button>
-      </div>
-
-      <h1 className="text-xl font-bold mb-4">Support</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input name="name" placeholder="Your Name" value={form.name} onChange={handleChange} required />
-        <Input name="email" placeholder="Your Email" value={form.email} onChange={handleChange} required />
-        <Textarea name="message" placeholder="Your Query" value={form.message} onChange={handleChange} required />
-        <Button type="submit" disabled={loading}>
-          {loading ? "Sending..." : "Send Query"}
-        </Button>
-
-        {status === "success" && (
-          <p className="text-green-600 text-sm mt-2">
-            Support email sent successfully. Ticket ID: <strong>{ticketId}</strong>.
-          </p>
-        )}
-        {status === "error" && (
-          <p className="text-red-600 text-sm mt-2">Something went wrong while sending your request.</p>
-        )}
-      </form>
-    </div>
+      </CardHeader>
+      <CardContent className="p-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            name="name"
+            placeholder="Your Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700"
+          />
+          <Input
+            name="email"
+            placeholder="Your Email"
+            value={form.email}
+            onChange={handleChange}
+            required
+            className="border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700"
+          />
+          <Textarea
+            name="message"
+            placeholder="Your Query"
+            value={form.message}
+            onChange={handleChange}
+            required
+            className="border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700"
+          />
+          <Button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105"
+          >
+            {loading ? "Sending..." : "Send Query"}
+          </Button>
+          {status === "success" && (
+            <div className="bg-blue-50 dark:bg-gray-800 rounded-lg p-4 text-blue-600 dark:text-blue-400 text-sm">
+              Support email sent successfully. Ticket ID: <strong>{ticketId}</strong>.
+            </div>
+          )}
+          {status === "error" && (
+            <div className="bg-blue-50 dark:bg-gray-800 rounded-lg p-4 text-red-600 dark:text-red-400 text-sm">
+              Something went wrong while sending your request.
+            </div>
+          )}
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

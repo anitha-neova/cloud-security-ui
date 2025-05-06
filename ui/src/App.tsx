@@ -17,8 +17,18 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <ProgressProvider>
-        <Toaster /> {/* Default notification system */}
-        <Sonner />  {/* Additional or alternative notification system */}
+        <Toaster
+          toastOptions={{
+            className:
+              "bg-blue-500 text-white rounded-lg shadow-md border-blue-200 dark:bg-blue-600 dark:border-gray-700 transition-all duration-200",
+          }}
+        />
+        <Sonner
+          toastOptions={{
+            className:
+              "bg-blue-500 text-white rounded-lg shadow-md border-blue-200 dark:bg-blue-600 dark:border-gray-700 transition-all duration-200",
+          }}
+        />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />

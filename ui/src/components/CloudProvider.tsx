@@ -16,25 +16,30 @@ const CloudProvider = ({ selectedCloud, setSelectedCloud }: CloudProviderProps) 
   ];
 
   return (
-    <div>
-      <label className="block text-sm font-medium mb-2">Cloud Provider</label>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="bg-blue-50 dark:bg-gray-800 rounded-xl p-6 border border-blue-200 dark:border-gray-700">
+      <label className="block text-base font-semibold text-gray-800 dark:text-white mb-3">
+        Cloud Provider
+      </label>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {cloudProviders.map((provider) => (
           <Card
             key={provider.id}
             className={cn(
-              "flex flex-col items-center justify-center p-4 cursor-pointer border transition-all",
+              "flex flex-col items-center justify-center p-6 cursor-pointer border transition-all duration-200 rounded-lg",
               selectedCloud === provider.id
-                ? "border-primary bg-primary/5 shadow-sm"
-                : "hover:border-gray-300 hover:bg-gray-50"
+                ? "border-blue-500 bg-blue-50 shadow-md dark:bg-gray-700 dark:border-blue-400"
+                : "border-gray-200 bg-white hover:shadow-lg hover:scale-105 dark:bg-gray-900 dark:border-gray-700"
             )}
             onClick={() => setSelectedCloud(provider.id)}
           >
-            <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center mb-2">
-              {/* In a real app, replace with actual logos */}
-              <span className="text-xs font-bold">{provider.name.charAt(0)}</span>
+            <div className="h-10 w-10 bg-blue-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3 shadow-sm">
+              <span className="text-sm font-bold text-blue-500 dark:text-blue-400">
+                {provider.name.charAt(0)}
+              </span>
             </div>
-            <span className="text-sm">{provider.name}</span>
+            <span className="text-base font-medium text-gray-800 dark:text-white">
+              {provider.name}
+            </span>
           </Card>
         ))}
       </div>

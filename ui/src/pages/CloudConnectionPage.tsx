@@ -82,8 +82,8 @@ const CloudConnectionPage = () => {
           </div>
 
           {cloudProvider && credentials ? (
-            <CloudDetails 
-              cloudProvider={cloudProvider} 
+            <CloudDetails
+              cloudProvider={cloudProvider}
               credentials={credentials}
               onDisconnect={handleDisconnect}
             />
@@ -94,7 +94,7 @@ const CloudConnectionPage = () => {
           <Alert>
             <AlertTitle>Security Note</AlertTitle>
             <AlertDescription>
-              Your cloud credentials are securely handled and not stored on our servers. 
+              Your cloud credentials are securely handled and not stored on our servers.
               All operations are performed client-side or through secure, temporary sessions.
             </AlertDescription>
           </Alert>

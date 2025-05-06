@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { createCloudResource } from "@/services/api";
-import { useProgress } from "@/context/ProgressContext"; // 👈 NEW
+import { useProgress } from "@/context/ProgressContext";
 import {
   Select,
   SelectTrigger,
@@ -15,6 +14,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import Layout from "@/components/Layout";
 
 const ResourceCreationPage = () => {
   const [userPrompt, setUserPrompt] = useState("");
@@ -24,11 +24,9 @@ const ResourceCreationPage = () => {
   const [terraformCode, setTerraformCode] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [selectedResource, setSelectedResource] = useState<
-    string | undefined
-  >();
+  const [selectedResource, setSelectedResource] = useState<string | undefined>();
 
-  const { setResourceCreated, setTerraformCode: setContextTerraformCode } = useProgress(); // 👈 use context
+  const { setResourceCreated, setTerraformCode: setContextTerraformCode } = useProgress();
 
   const simulateProgress = (targetProgress: number) => {
     return new Promise<void>((resolve) => {
@@ -46,7 +44,6 @@ const ResourceCreationPage = () => {
   };
 
   const handleCreateResource = async () => {
-
     if (!selectedResource) {
       toast({
         title: "Resource Type Required",
@@ -58,8 +55,7 @@ const ResourceCreationPage = () => {
     if (!userPrompt.trim()) {
       toast({
         title: "Input Required",
-        description:
-          "Please enter a prompt describing the resource you want to create.",
+        description: "Please enter a prompt describing the resource you want to create.",
         variant: "destructive",
       });
       return;
@@ -77,14 +73,7 @@ const ResourceCreationPage = () => {
       return;
     }
 
-    // Optional: simple check for conflict
-    const knownResources = [
-      "s3",
-      "ec2",
-      "iam",
-      "vpc",
-      "lambda",
-    ]; // Expand as needed
+    const knownResources = ["s3", "ec2", "iam", "vpc", "lambda"];
     const conflictingResource = knownResources.find(
       (res) => prompt.includes(res) && res !== selected
     );
@@ -113,8 +102,8 @@ const ResourceCreationPage = () => {
 
       if (result?.terraform_code) {
         setTerraformCode(result.terraform_code);
-        setContextTerraformCode(result.terraform_code); // Store code in context
-        setResourceCreated(true); // 👈 Update context after success
+        setContextTerraformCode(result.terraform_code);
+        setResourceCreated(true);
       }
 
       toast({
@@ -122,9 +111,7 @@ const ResourceCreationPage = () => {
         description: "The cloud resource has been successfully created.",
       });
 
-      // Redirect to home page after success
       navigate("/");
-
     } catch (error) {
       toast({
         title: "Error",
@@ -137,76 +124,69 @@ const ResourceCreationPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
+    <Layout promptHistory={[]}>
+      <div className="space-y-6 max-w-3xl mx-auto">
+        <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
+          <CardHeader className="p-6">
+            <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
+              Resource Creation
+            </CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-400">
+              Select a cloud resource type and describe the parameters to generate Terraform code.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6 space-y-4">
+            <Select value={selectedResource} onValueChange={setSelectedResource}>
+              <SelectTrigger className="border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700">
+                <SelectValue placeholder="Choose a resource type..." />
+              </SelectTrigger>
+              <SelectContent className="border-gray-200 rounded-lg dark:border-gray-700 bg-white dark:bg-gray-800">
+                <SelectItem value="Create s3 bucket">S3 Bucket</SelectItem>
+                <SelectItem value="Create ec2 instance">EC2 Instance</SelectItem>
+                <SelectItem value="Create rds database">RDS Database</SelectItem>
+                <SelectItem value="Create lambda function">Lambda Function</SelectItem>
+              </SelectContent>
+            </Select>
+            <Textarea
+              placeholder="Please specify parameters e.g., with public access disabled"
+              className="min-h-[100px] border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700"
+              value={userPrompt}
+              onChange={(e) => setUserPrompt(e.target.value)}
+              disabled={isProcessing}
+            />
+          </CardContent>
+          <CardFooter className="p-6 flex justify-end">
+            <Button
+              onClick={handleCreateResource}
+              disabled={isProcessing}
+              className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105"
+            >
+              {isProcessing ? "Processing..." : "Create Resource"}
+            </Button>
+          </CardFooter>
+        </Card>
 
-      <main className="flex-1 p-6 overflow-y-auto">
-        <div className="space-y-6 container mx-auto max-w-6xl">
-          <div>
-            <h1 className="text-3xl font-bold">Resource Creation</h1>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>What resources would you like to create?</CardTitle>
-              <CardDescription>
-                Select the cloud resources you want to create and specify
-                parameters for resource.
+        {isProcessing && (
+          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
+            <CardHeader className="p-6">
+              <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
+                Processing
+              </CardTitle>
+              <CardDescription className="text-gray-600 dark:text-gray-400">
+                {currentStep}
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <Select
-                    value={selectedResource}
-                    onValueChange={setSelectedResource}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Choose a resource type..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Create s3 bucket">S3 Bucket</SelectItem>
-                      <SelectItem value="Create ec2 instance">EC2 Instance</SelectItem>
-                      <SelectItem value="Create rds database">RDS Database</SelectItem>
-                      <SelectItem value="Create lambda function">
-                        Lambda Function
-                      </SelectItem>
-                      {/* Add more resource types as needed */}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-            <CardContent>
-              <Textarea
-                placeholder="Please specify parameters e.g., with public access disabled"
-                className="min-h-[100px]"
-                value={userPrompt}
-                onChange={(e) => setUserPrompt(e.target.value)}
-                disabled={isProcessing}
+            <CardContent className="p-6">
+              <Progress
+                value={progress}
+                className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full"
+                indicatorClassName="bg-blue-500"
               />
             </CardContent>
-            <CardFooter className="flex justify-end">
-              <Button onClick={handleCreateResource} disabled={isProcessing}>
-                {isProcessing ? "Processing..." : "Create Resource"}
-              </Button>
-            </CardFooter>
           </Card>
-
-          {isProcessing && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Processing</CardTitle>
-                <CardDescription>{currentStep}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Progress value={progress} className="h-2" />
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </main>
-    </div>
+        )}
+      </div>
+    </Layout>
   );
 };
 

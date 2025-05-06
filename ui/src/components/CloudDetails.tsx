@@ -34,52 +34,59 @@ const CloudDetails = ({ cloudProvider, credentials, onDisconnect }: CloudDetails
         return (
           <div className="space-y-3">
             <div>
-              <span className="font-semibold">Region:</span> {credentials.region}
+              <span className="font-semibold text-gray-800">Region:</span>{" "}
+              <span className="text-gray-600">{credentials.region}</span>
             </div>
             <div>
-              <span className="font-semibold">Access Key:</span> {credentials.accessKey.substring(0, 4)}...
+              <span className="font-semibold text-gray-800">Access Key:</span>{" "}
+              <span className="text-gray-600">{credentials.accessKey.substring(0, 4)}...</span>
             </div>
           </div>
         );
-        
+
       case "azure":
         return (
           <div className="space-y-3">
             <div>
-              <span className="font-semibold">Tenant ID:</span> {credentials.tenantId.substring(0, 4)}...
+              <span className="font-semibold text-gray-800">Tenant ID:</span>{" "}
+              <span className="text-gray-600">{credentials.tenantId.substring(0, 4)}...</span>
             </div>
             <div>
-              <span className="font-semibold">Subscription ID:</span> {credentials.subscriptionId.substring(0, 4)}...
+              <span className="font-semibold text-gray-800">Subscription ID:</span>{" "}
+              <span className="text-gray-600">{credentials.subscriptionId.substring(0, 4)}...</span>
             </div>
           </div>
         );
-        
+
       case "gcp":
         return (
           <div className="space-y-3">
             <div>
-              <span className="font-semibold">Project ID:</span> {credentials.projectId}
+              <span className="font-semibold text-gray-800">Project ID:</span>{" "}
+              <span className="text-gray-600">{credentials.projectId}</span>
             </div>
             <div>
-              <span className="font-semibold">Region:</span> {credentials.region}
+              <span className="font-semibold text-gray-800">Region:</span>{" "}
+              <span className="text-gray-600">{credentials.region}</span>
             </div>
           </div>
         );
-        
+
       case "ibm":
         return (
           <div className="space-y-3">
             <div>
-              <span className="font-semibold">Region:</span> {credentials.region}
+              <span className="font-semibold text-gray-800">Region:</span>{" "}
+              <span className="text-gray-600">{credentials.region}</span>
             </div>
           </div>
         );
-        
+
       default:
         return null;
     }
   };
-  
+
   const handleDisconnect = () => {
     toast({
       title: "Cloud Disconnected",
@@ -89,33 +96,44 @@ const CloudDetails = ({ cloudProvider, credentials, onDisconnect }: CloudDetails
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto">
-      <CardHeader>
+    <Card className="w-full max-w-3xl mx-auto bg-blue-50 rounded-xl shadow-md border-blue-200 dark:bg-gray-800 dark:border-gray-700">
+      <CardHeader className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Connected Cloud Provider</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
+              Connected Cloud Provider
+            </CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-400">
               Currently connected to the following cloud provider
             </CardDescription>
           </div>
-          <Badge className={`${getCloudColor(cloudProvider)} text-white`}>
+          <Badge
+            className={`${getCloudColor(
+              cloudProvider
+            )} text-white rounded-full shadow-sm px-3 py-1`}
+          >
             {cloudProvider.toUpperCase()}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         <div className="space-y-6">
           <div>
-            <h3 className="text-lg font-semibold mb-2">Connection Details</h3>
-            <div className="bg-gray-50 p-3 rounded-md">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+              Connection Details
+            </h3>
+            <div className="bg-white dark:bg-gray-900 p-4 rounded-md border border-gray-200 dark:border-gray-700">
               {renderCredentialFields()}
             </div>
           </div>
-          
-          <Separator />
-          
+
+          <Separator className="border-blue-200 dark:border-gray-700" />
+
           <div className="flex justify-end">
-            <Button variant="destructive" onClick={handleDisconnect}>
+            <Button
+              className="bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 hover:scale-105"
+              onClick={handleDisconnect}
+            >
               Disconnect
             </Button>
           </div>

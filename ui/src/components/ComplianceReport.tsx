@@ -1,29 +1,63 @@
 import { Button } from "@/components/ui/button";
-import { Mail, Download } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Download, Mail } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ComplianceReportProps {
-  data: any;
-  onDownload: () => void;
-  onEmail: () => void;
+  reportId: string;
+  onDownloadPDF: () => void;
+  onEmailReport: () => void;
 }
 
-const ComplianceReport = ({ data, onDownload, onEmail }: ComplianceReportProps) => {
+const ComplianceReport = ({ reportId, onDownloadPDF, onEmailReport }: ComplianceReportProps) => {
   const { toast } = useToast();
 
+  const handleDownloadPDF = () => {
+    onDownloadPDF();
+    toast({
+      title: "Report Downloaded",
+      description: "The compliance report has been downloaded as a PDF.",
+    });
+  };
+
+  const handleEmailReport = () => {
+    onEmailReport();
+    toast({
+      title: "Report Emailed",
+      description: "The compliance report has been sent to your email.",
+    });
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-4">
-        <Button className="flex-1" onClick={onDownload}>
-          <Download className="mr-2 h-4 w-4" />
-          Download PDF
-        </Button>
-        <Button variant="outline" className="flex-1" onClick={onEmail}>
-          <Mail className="mr-2 h-4 w-4" />
-          Email Report
-        </Button>
-      </div>
-    </div>
+    <Card className="w-full max-w-3xl mx-auto bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
+      <CardHeader className="p-6">
+        <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
+          Compliance Report
+        </CardTitle>
+        <CardDescription className="text-gray-600 dark:text-gray-400">
+          Download or email your compliance report for {reportId}.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="p-6">
+        <div className="flex gap-3 justify-end">
+          <Button
+            variant="outline"
+            className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 hover:scale-105"
+            onClick={handleEmailReport}
+          >
+            <Mail className="h-5 w-5 mr-2" />
+            Email Report
+          </Button>
+          <Button
+            className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105"
+            onClick={handleDownloadPDF}
+          >
+            <Download className="h-5 w-5 mr-2" />
+            Download PDF
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

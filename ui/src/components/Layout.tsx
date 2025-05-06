@@ -1,16 +1,22 @@
-import { Outlet } from "react-router-dom";
-import Header from "@/components/Header"; // adjust path as needed
-import Sidebar from "@/components/Sidebar"; // optional, if using sidebar
+import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
 
-const Layout = () => {
+interface LayoutProps {
+  children: React.ReactNode;
+  promptHistory: string[];
+}
+
+const Layout = ({ children, promptHistory }: LayoutProps) => {
   return (
-    <div className="flex h-screen">
-      <Sidebar promptHistory={[]} /> {/* Optional if you use a sidebar */}
-      <div className="flex-1 flex flex-col">
-        <Header />
-        <main className="flex-1 overflow-auto p-4">
-          <Outlet /> {/* This renders the active route component */}
-        </main>
+    <div className="min-h-screen bg-blue-50 dark:bg-gray-800 flex flex-col">
+      <Header className="shadow-sm" />
+      <div className="flex flex-1 max-w-7xl mx-auto w-full">
+        <Sidebar promptHistory={promptHistory} />
+        <div className="flex-1 p-6">
+          <main className="bg-white dark:bg-gray-900 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-200 overflow-auto">
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   );

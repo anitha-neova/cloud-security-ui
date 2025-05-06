@@ -29,7 +29,7 @@ const Sidebar = ({ promptHistory }: SidebarProps) => {
   return (
     <div
       className={cn(
-        "border-r bg-gray-50 dark:bg-gray-900 dark:border-gray-700 transition-all duration-300 flex flex-col",
+        "border-r bg-blue-50 dark:bg-gray-800 dark:border-gray-700 transition-all duration-300 flex flex-col shadow-sm",
         collapsed ? "w-[60px]" : "w-[250px]"
       )}
     >
@@ -37,13 +37,13 @@ const Sidebar = ({ promptHistory }: SidebarProps) => {
         <Button
           variant="ghost"
           size="sm"
-          className="w-full justify-start text-gray-800 dark:text-gray-200"
+          className="w-full justify-start text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-gray-700 rounded-md"
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-6 w-6" />
           ) : (
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-6 w-6" />
           )}
           {!collapsed && <span className="ml-2">Collapse</span>}
         </Button>
@@ -64,15 +64,16 @@ const Sidebar = ({ promptHistory }: SidebarProps) => {
                       variant="ghost"
                       size="sm"
                       className={cn(
-                        "w-full justify-start text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700",
+                        "w-full justify-start text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-gray-700 rounded-md",
                         collapsed ? "px-2" : ""
                       )}
                       onClick={() => navigate(item.href)}
                     >
                       <item.icon
                         className={cn(
-                          "h-4 w-4",
-                          collapsed ? "mx-auto" : "mr-2"
+                          "h-6 w-6",
+                          collapsed ? "mx-auto" : "mr-2",
+                          window.location.pathname === item.href ? "text-blue-500 dark:text-blue-400" : ""
                         )}
                       />
                       {!collapsed && <span>{item.label}</span>}
@@ -91,12 +92,12 @@ const Sidebar = ({ promptHistory }: SidebarProps) => {
       {promptHistory.length > 0 && (
         <div
           className={cn(
-            "border-t p-2 border-gray-200 dark:border-gray-700",
+            "border-t p-2 border-blue-200 dark:border-gray-700",
             collapsed ? "hidden" : "block"
           )}
         >
-          <div className="flex items-center mb-2 text-gray-800 dark:text-gray-200">
-            <Clock className="h-4 w-4 mr-2" />
+          <div className="flex items-center mb-2 text-blue-600 dark:text-blue-400">
+            <Clock className="h-6 w-6 mr-2" />
             <span className="text-sm font-medium">Prompt History</span>
           </div>
           <ScrollArea className="h-[200px]">
@@ -104,7 +105,7 @@ const Sidebar = ({ promptHistory }: SidebarProps) => {
               {promptHistory.map((prompt, index) => (
                 <li
                   key={index}
-                  className="text-sm truncate p-1 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                  className="text-sm truncate p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-gray-700 rounded-md"
                 >
                   {prompt}
                 </li>
@@ -118,4 +119,3 @@ const Sidebar = ({ promptHistory }: SidebarProps) => {
 };
 
 export default Sidebar;
- 

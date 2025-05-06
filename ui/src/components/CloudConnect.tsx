@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -63,14 +63,14 @@ type CloudConnectProps = {
 const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) => {
   const [selectedCloud, setSelectedCloud] = useState("aws");
   const { toast } = useToast();
-  
+
   const formSchemas = {
     aws: awsSchema,
     azure: azureSchema,
     gcp: gcpSchema,
     ibm: ibmSchema,
   };
-  
+
   const form = useForm({
     resolver: zodResolver(formSchemas[selectedCloud as keyof typeof formSchemas]),
     defaultValues: {
@@ -108,9 +108,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="accessKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Access Key</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">Access Key</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter AWS Access Key" {...field} />
+                    <Input className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="Enter AWS Access Key" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -121,9 +121,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="secretKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Secret Key</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">Secret Key</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Enter AWS Secret Key" {...field} />
+                    <Input type="password" className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="Enter AWS Secret Key" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -134,9 +134,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="region"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Region</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">Region</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., us-east-1" {...field} />
+                    <Input className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="e.g., us-east-1" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -144,7 +144,7 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
             />
           </>
         );
-        
+
       case "azure":
         return (
           <>
@@ -153,9 +153,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="tenantId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tenant ID</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">Tenant ID</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Azure Tenant ID" {...field} />
+                    <Input className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="Enter Azure Tenant ID" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -166,9 +166,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="clientId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Client ID</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">Client ID</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Azure Client ID" {...field} />
+                    <Input className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="Enter Azure Client ID" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -179,9 +179,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="clientSecret"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Client Secret</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">Client Secret</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Enter Azure Client Secret" {...field} />
+                    <Input type="password" className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="Enter Azure Client Secret" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -192,9 +192,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="subscriptionId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Subscription ID</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">Subscription ID</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Azure Subscription ID" {...field} />
+                    <Input className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="Enter Azure Subscription ID" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -202,7 +202,7 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
             />
           </>
         );
-        
+
       case "gcp":
         return (
           <>
@@ -211,9 +211,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="projectId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Project ID</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">Project ID</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter GCP Project ID" {...field} />
+                    <Input className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="Enter GCP Project ID" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -224,9 +224,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="serviceAccountKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Service Account Key</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">Service Account Key</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Enter GCP Service Account Key" {...field} />
+                    <Input type="password" className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="Enter GCP Service Account Key" {...field} />
                   </FormControl>
                   <FormDescription>
                     Paste the entire JSON service account key
@@ -240,9 +240,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="region"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Region</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">Region</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., us-central1" {...field} />
+                    <Input className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="e.g., us-central1" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -250,7 +250,7 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
             />
           </>
         );
-        
+
       case "ibm":
         return (
           <>
@@ -259,9 +259,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="apiKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>API Key</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">API Key</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Enter IBM Cloud API Key" {...field} />
+                    <Input type="password" className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="Enter IBM Cloud API Key" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -272,9 +272,9 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
               name="region"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Region</FormLabel>
+                  <FormLabel className="font-semibold text-gray-800">Region</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., us-south" {...field} />
+                    <Input className="bg-white border-gray-200 focus:ring-blue-500 rounded-md" placeholder="e.g., us-south" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -282,47 +282,47 @@ const CloudConnect = ({ onConnect, isConnecting = false }: CloudConnectProps) =>
             />
           </>
         );
-      
+
       default:
         return null;
     }
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto">
+    <Card className="w-full max-w-3xl mx-auto bg-blue-50 rounded-xl shadow-md border-blue-200">
       <CardHeader>
-        <CardTitle>Connect to Cloud Provider</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-2xl font-semibold text-gray-800">Connect to Cloud Provider</CardTitle>
+        <CardDescription className="text-gray-600">
           Enter your credentials to connect to your cloud provider
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">Select Cloud Provider</label>
+          <label className="block text-sm font-semibold text-gray-800 mb-2">Select Cloud Provider</label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {cloudProviders.map((provider) => (
               <Card
                 key={provider.id}
-                className={`flex flex-col items-center justify-center p-4 cursor-pointer border transition-all ${
+                className={`flex flex-col items-center justify-center p-4 cursor-pointer border transition-all rounded-lg ${
                   selectedCloud === provider.id
-                    ? "border-primary bg-primary/5 shadow-sm"
-                    : "hover:border-gray-300 hover:bg-gray-50"
+                    ? "border-blue-500 bg-blue-50 shadow-md"
+                    : "border-gray-200 bg-white hover:shadow-md hover:bg-blue-50"
                 }`}
                 onClick={() => setSelectedCloud(provider.id)}
               >
                 <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center mb-2">
-                  <span className="text-xs font-bold">{provider.name.charAt(0)}</span>
+                  <span className="text-xs font-bold text-blue-500">{provider.name.charAt(0)}</span>
                 </div>
-                <span className="text-sm">{provider.name}</span>
+                <span className="text-sm text-gray-800">{provider.name}</span>
               </Card>
             ))}
           </div>
         </div>
-        
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {renderFields()}
-            <Button type="submit" className="w-full" disabled={isConnecting}>
+            <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200" disabled={isConnecting}>
               {isConnecting ? "Connecting..." : "Connect"}
             </Button>
           </form>

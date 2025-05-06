@@ -44,33 +44,38 @@ const CodeViewer = ({ code, title = "Generated Terraform Code" }: CodeViewerProp
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>{title}</CardTitle>
-        <div className="flex space-x-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
+    <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
+      <CardHeader className="flex flex-row items-center justify-between p-6">
+        <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
+          {title}
+        </CardTitle>
+        <div className="flex gap-3">
+          <Button
+            className={cn(
+              "bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200",
+              copied && "bg-blue-600"
+            )}
+            size="default"
             onClick={copyToClipboard}
           >
-            <ClipboardCopy className="h-4 w-4 mr-2" />
+            <ClipboardCopy className="h-5 w-5 mr-2" />
             {copied ? "Copied!" : "Copy"}
           </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105"
+            size="default"
             onClick={downloadCode}
           >
-            <Download className="h-4 w-4 mr-2" />
+            <Download className="h-5 w-5 mr-2" />
             Download
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         <div className="relative">
           <pre className={cn(
-            "p-4 rounded-md bg-gray-900 text-gray-50 overflow-x-auto",
-            "text-sm font-mono"
+            "p-6 rounded-lg bg-gray-900 text-gray-50 overflow-x-auto",
+            "text-base font-mono"
           )}>
             <code>{code}</code>
           </pre>

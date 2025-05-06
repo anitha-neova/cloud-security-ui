@@ -5,3 +5,7 @@ venv/
 .idea/
 __pycache__/
 package-lock.json
+main.tf
+terraform.tfstate.backup
+*.pdf
+*.xlsx
