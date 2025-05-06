@@ -20,6 +20,7 @@ app = FastAPI()
 
 ticket_counter = 0
 # CORS settings
+# CORS settings
 origins = [
     "http://localhost:3000",  # React dev server
     "http://localhost:8080",
@@ -28,10 +29,9 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,        # or ["*"] for all
+    allow_origins=["*"],  # or ["*"] for all
     allow_credentials=True,
-    allow_methods=["*"],          # Allow all HTTP methods (GET, POST, etc.)
-    allow_headers=["*"],          # Allow all headers (Content-Type, Authorization, etc.)
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
 )
 
 # Basic logging setup
@@ -44,22 +44,28 @@ logging.basicConfig(
     ]
 )
 
+
 class EmailRequest(BaseModel):
     recipient_email: str
+
 
 class ResourceProvisionRequest(BaseModel):
     prompt: str
 
+
 class ComplianceRequest(BaseModel):
     prompt: str
 
+
 # Include the onboarding router
 app.include_router(onboard_cloud_router, prefix="/onboard_cloud", tags=["Onboarding"])
+
 
 # Root endpoint
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the AI-powered Cloud Compliance Automation API!"}
+
 
 @app.post("/create_resource")
 async def create_resource(request: ResourceProvisionRequest):
@@ -75,6 +81,7 @@ async def create_resource(request: ResourceProvisionRequest):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 # Endpoint to trigger compliance scan
 @app.post("/run_compliance_scan")
@@ -96,6 +103,7 @@ async def run_compliance_scan(request: ComplianceRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 # Endpoint to download generated PDF report
 @app.get("/download_compliance_report/")
 async def download_compliance_report():
@@ -109,6 +117,7 @@ async def download_compliance_report():
         filename="cis_compliance_report.pdf",
         media_type="application/pdf"
     )
+
 
 # (Optional) Endpoint to download XLSX compliance overview if you want
 @app.get("/download_compliance_xlsx/")
@@ -165,22 +174,19 @@ async def support_email(
 ):
     global ticket_counter
     try:
-        # Generate ticket ID
         ticket_counter += 1
-        timestamp = int(time.time())  # Epoch format
+        timestamp = int(time.time())
         ticket_id = f"NEOTICKET-{ticket_counter}-{timestamp}"
 
-        # Format email
         msg = EmailMessage()
         msg["Subject"] = f"[{ticket_id}] {subject}"
         msg["From"] = os.getenv("SMTP_USERNAME")
-        msg["To"] = os.getenv("SMTP_USERNAME")
+        msg["To"] = os.getenv("SMTP_USERNAME", os.getenv("SMTP_USERNAME"))
         msg["Reply-To"] = user_email
         msg.set_content(
             f"Support Ticket ID: {ticket_id}\n\nFrom: {user_email}\n\nQuery:\n{message_body}"
         )
 
-        # Send email
         with smtplib.SMTP(os.getenv("SMTP_SERVER"), int(os.getenv("SMTP_PORT"))) as smtp:
             smtp.starttls()
             smtp.login(os.getenv("SMTP_USERNAME"), os.getenv("SMTP_PASSWORD"))
@@ -193,9 +199,9 @@ async def support_email(
 
     except Exception as e:
         logging.error(f"Failed to send email: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to send email.")
+        raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
- 
