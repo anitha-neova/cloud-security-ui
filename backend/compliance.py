@@ -90,8 +90,8 @@ async def handle_compliance(user_prompt: str):
         terraform_manager.destroy_terraform()
         if compliance:
             compliance.cleanup_compliance_file()
-        if analyzer:
-            analyzer.cleanup_report_files()
+#        if analyzer:
+#            analyzer.cleanup_report_files()
     except Exception as e:
         raise Exception(f"❌ Failed to cleanup resources: {e}")                         
 

@@ -148,3 +148,28 @@ export const downloadComplianceReport = async () => {
     throw error;
   }
 };
+
+export const emailComplianceReport = async (emailData: { recipient_email: string }) => {
+  try {
+    console.log("Sending email request with data:", emailData);
+
+    const response = await fetch(`${API_URL}/email_compliance_report`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(emailData),
+      redirect: "manual",
+    });
+
+    return await handleResponse(response);
+  } catch (error) {
+    console.error("Email sending error:", error);
+    toast({
+      title: "Email Send Failed",
+      description: error instanceof Error ? error.message : "Unknown error occurred",
+      variant: "destructive",
+    });
+    throw error;
+  }
+};
