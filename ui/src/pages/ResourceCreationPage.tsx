@@ -8,6 +8,13 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { createCloudResource } from "@/services/api";
 import { useProgress } from "@/context/ProgressContext"; // 👈 NEW
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 const ResourceCreationPage = () => {
   const [userPrompt, setUserPrompt] = useState("");
@@ -17,6 +24,9 @@ const ResourceCreationPage = () => {
   const [terraformCode, setTerraformCode] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [selectedResource, setSelectedResource] = useState<
+    string | undefined
+  >();
 
   const { setResourceCreated, setTerraformCode: setContextTerraformCode } = useProgress(); // 👈 use context
 
@@ -36,10 +46,53 @@ const ResourceCreationPage = () => {
   };
 
   const handleCreateResource = async () => {
+
+    if (!selectedResource) {
+      toast({
+        title: "Resource Type Required",
+        description: "Please select a resource type before submitting.",
+        variant: "destructive",
+      });
+      return;
+    }
     if (!userPrompt.trim()) {
       toast({
         title: "Input Required",
-        description: "Please enter a prompt describing the resource you want to create.",
+        description:
+          "Please enter a prompt describing the resource you want to create.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const selected = selectedResource.trim().toLowerCase();
+    const prompt = userPrompt.trim().toLowerCase();
+
+    if (prompt.includes(selected)) {
+      toast({
+        title: "Duplicate Resource Mentioned",
+        description: `Your prompt already includes "${selectedResource}". Please avoid repeating it.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Optional: simple check for conflict
+    const knownResources = [
+      "s3",
+      "ec2",
+      "iam",
+      "vpc",
+      "lambda",
+    ]; // Expand as needed
+    const conflictingResource = knownResources.find(
+      (res) => prompt.includes(res) && res !== selected
+    );
+
+    if (conflictingResource) {
+      toast({
+        title: "Conflicting Resource Detected",
+        description: `Your prompt mentions "${conflictingResource}", which doesn't match the selected resource type "${selectedResource}".`,
         variant: "destructive",
       });
       return;
@@ -49,11 +102,11 @@ const ResourceCreationPage = () => {
       setIsProcessing(true);
       setTerraformCode("");
       setProgress(0);
+      const updatedPrompt = `${selectedResource ?? ""} ${userPrompt}`;
       setCurrentStep("Analyzing resource requirements");
       await simulateProgress(30);
-
       setCurrentStep("Creating cloud resource");
-      const result = await createCloudResource({ prompt: userPrompt });
+      const result = await createCloudResource({ prompt: updatedPrompt });
       await simulateProgress(100);
 
       setCurrentStep("Complete");
@@ -97,12 +150,36 @@ const ResourceCreationPage = () => {
             <CardHeader>
               <CardTitle>What resources would you like to create?</CardTitle>
               <CardDescription>
-                Describe the cloud resources you want to create with specific parameters.
+                Select the cloud resources you want to create and specify
+                parameters for resource.
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <Select
+                    value={selectedResource}
+                    onValueChange={setSelectedResource}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Choose a resource type..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Create s3 bucket">S3 Bucket</SelectItem>
+                      <SelectItem value="Create ec2 instance">EC2 Instance</SelectItem>
+                      <SelectItem value="Create rds database">RDS Database</SelectItem>
+                      <SelectItem value="Create lambda function">
+                        Lambda Function
+                      </SelectItem>
+                      {/* Add more resource types as needed */}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+            <CardContent>
               <Textarea
-                placeholder="e.g., Create AWS S3 bucket with versioning and encryption"
+                placeholder="Please specify parameters e.g., with public access disabled"
                 className="min-h-[100px]"
                 value={userPrompt}
                 onChange={(e) => setUserPrompt(e.target.value)}
