@@ -33,6 +33,7 @@ const Index = () => {
     terraformCode,
     setCloudConnected,
     setResourceCreated,
+    setTerraformCode,
     setComplianceChecked,
   } = useProgress();
   const { toast } = useToast();
@@ -69,6 +70,7 @@ const Index = () => {
     setCloudConnected(false);
     setResourceCreated(false);
     setComplianceChecked(false);
+    setTerraformCode("");
     setStep(0);
     toast({
       title: "Progress reset",
