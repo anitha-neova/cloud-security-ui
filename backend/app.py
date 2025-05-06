@@ -1,5 +1,5 @@
 import time
-
+from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,9 +11,14 @@ from compliance import create_terraform_resource, handle_compliance  # Import yo
 from pydantic import BaseModel
 from email.message import EmailMessage
 import smtplib
+from s3_utils import download_file_from_s3,list_files_in_s3_bucket
 
 # Load environment variables
 load_dotenv()
+
+# Bucket and prefix information
+BUCKET_NAME = "neova-cloudsec-ai"
+S3_PREFIX = "compliance-reports/"
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -194,6 +199,52 @@ async def support_email(
     except Exception as e:
         logging.error(f"Failed to send email: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to send email.")
+
+
+@app.get("/list_compliance_reports")
+async def list_compliance_reports():
+    try:
+        # Use the utility function to get the list of files
+        file_names = list_files_in_s3_bucket(BUCKET_NAME, S3_PREFIX)
+
+        return JSONResponse(content={"files": file_names})
+
+    except Exception as e:
+        logging.error(f"❌ Error listing files: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to list compliance reports.")
+
+@app.get("/download_s3_compliance_report/{report_name:path}")
+async def download_s3_compliance_report(report_name: str):
+    try:
+        # Determine the Downloads folder path based on the OS
+        if os.name == 'nt':  # Windows
+            download_folder = Path(os.environ["USERPROFILE"]) / "Downloads"
+        else:  # Linux/macOS
+            download_folder = Path.home() / "Downloads"
+        
+        # Ensure the Downloads directory exists
+        if not download_folder.exists():
+            raise Exception("Downloads directory not found.")
+        
+        # Create the correct local file path in the Downloads folder
+        local_file_path = download_folder / report_name.split("/")[-1]  # Extract file name
+
+        # Add the prefix back to the S3 key
+        full_s3_key = f"compliance-reports/{report_name.split('/')[-1]}"  # Add prefix
+
+        # Download the file from S3 using the full S3 key
+        if not download_file_from_s3(str(local_file_path), BUCKET_NAME, full_s3_key):
+            raise HTTPException(status_code=404, detail="Report not found in S3.")
+
+        return FileResponse(
+            path=str(local_file_path),
+            filename=report_name.split("/")[-1],
+            media_type="application/pdf"
+        )
+    except Exception as e:
+        logging.error(f"❌ Error downloading S3 file: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to download the report from S3.")
+
 
 if __name__ == "__main__":
     import uvicorn

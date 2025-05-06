@@ -3,7 +3,9 @@ import json
 import logging
 import os
 import re
+from s3_utils import upload_file_to_s3
 from typing import Dict, List, Tuple
+from datetime import datetime
 
 import pandas as pd
 from openai import OpenAI
@@ -270,6 +272,12 @@ class CISComplianceAnalyzer:
 
         # Now call the fixed static method
         CISComplianceAnalyzer.xlsx_to_pdf(xlsx_path, pdf_path)
+
+        # Upload PDF to S3
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")  # Or use uuid.uuid4()
+        unique_s3_key = f"compliance-reports/cis_compliance_report_{timestamp}.pdf"
+        s3_bucket_name = 'neova-cloudsec-ai'
+        upload_file_to_s3(pdf_path, s3_bucket_name, unique_s3_key) 
 
         return xlsx_path
 

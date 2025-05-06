@@ -173,3 +173,50 @@ export const emailComplianceReport = async (emailData: { recipient_email: string
     throw error;
   }
 };
+
+export const listComplianceReports = async () => {
+  try {
+    console.log("Fetching compliance reports list");
+
+    const response = await fetch(`${API_URL}/list_compliance_reports`, {
+      method: "GET",
+      redirect: "manual",
+    });
+
+    return await handleResponse(response);
+  } catch (error) {
+    console.error("Error fetching compliance reports list:", error);
+    toast({
+      title: "Failed to Fetch Reports List",
+      description: error instanceof Error ? error.message : "Unknown error occurred",
+      variant: "destructive",
+    });
+    throw error;
+  }
+};
+
+export const downloadS3ComplianceReport = async (reportName: string) => {
+  try {
+    console.log(`Downloading S3 compliance report: ${reportName}`);
+
+    const response = await fetch(`${API_URL}/download_s3_compliance_report/${reportName}`, {
+      method: "GET",
+      redirect: "manual"
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+
+    // Return the blob for frontend to handle download
+    return await response.blob();
+  } catch (error) {
+    console.error("S3 Report download error:", error);
+    toast({
+      title: "S3 Report Download Failed",
+      description: error instanceof Error ? error.message : "Unknown error occurred",
+      variant: "destructive",
+    });
+    throw error;
+  }
+};
