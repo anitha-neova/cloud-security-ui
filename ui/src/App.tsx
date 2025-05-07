@@ -12,7 +12,10 @@ import ResourceCreationPage from "./pages/ResourceCreationPage";
 import SupportPage from "./pages/SupportPage";
 import { ProgressProvider } from "@/context/ProgressContext";
 import ReportsPage from "@/pages/ReportsPage.tsx";
-import LogoutPage from "./pages/LogoutPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import ProtectedRoute from "@/components/ProtectedRoute";
+
 
 const queryClient = new QueryClient();
 
@@ -33,17 +36,25 @@ const App = () => (
           }}
         />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
+        <Routes>
+          {/* Default route goes to Login */}
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Index />} />
             <Route path="/cloud-connect" element={<CloudConnectionPage />} />
-            <Route path="/resource-creation" element={<ResourceCreationPage />} />
             <Route path="/compliance" element={<CompliancePage />} />
+            <Route path="/resource-creation" element={<ResourceCreationPage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/logout" element={<LogoutPage />} />
-            <Route path="/login" element={<div className="min-h-screen bg-blue-50 dark:bg-gray-800 flex items-center justify-center text-gray-800 dark:text-white">Login Page</div>} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          </Route>
+          
+          {/* Catch-all for 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
         </BrowserRouter>
       </ProgressProvider>
     </TooltipProvider>

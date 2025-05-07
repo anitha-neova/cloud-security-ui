@@ -27,6 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleLogout = () => {
+    localStorage.removeItem("access_token");
     setCloudConnected(false);
     setResourceCreated(false);
     setComplianceChecked(false);

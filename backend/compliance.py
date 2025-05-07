@@ -55,6 +55,13 @@ async def create_terraform_resource(user_prompt: str):
 
     return generated_code
 
+async def delete_reports():
+    compliance = ComplianceManager(os.getenv("OPENAI_API_KEY"))
+    analyzer = CISComplianceAnalyzer(os.getenv("OPENAI_API_KEY"))
+    if compliance:
+            compliance.cleanup_compliance_file()
+    if analyzer:
+        analyzer.cleanup_report_files()
 
 async def handle_compliance(user_prompt: str):
     """Handles user input, runs Terraform, and performs CIS compliance analysis."""
