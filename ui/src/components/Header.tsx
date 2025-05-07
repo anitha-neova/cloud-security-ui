@@ -37,7 +37,7 @@ const Header = ({className}: HeaderProps) => {
                     <img
                         src="/neova_solutions_logo.png"
                         alt="Neova Solutions Logo"
-                        className="h-24 w-30"
+                        className="h-auto w-auto"
                     />
                     <h1
                         className="font-bold text-3xl text-blue-600 dark:text-blue-400"
