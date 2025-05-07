@@ -26,18 +26,18 @@ import Layout from "@/components/Layout";
 const Index = () => {
   const navigate = useNavigate();
   const {
+    setStep,
+    terraformCode,
     cloudConnected,
     resourceCreated,
     complianceChecked,
-    setStep,
-    terraformCode,
     setCloudConnected,
     setResourceCreated,
     setTerraformCode,
     setComplianceChecked,
-    reports,
     setReports
   } = useProgress();
+
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
@@ -81,154 +81,162 @@ const Index = () => {
   };
 
   return (
-      <Layout promptHistory={[]}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-7xl mx-auto p-6">
-          {/* Cloud Connect Card */}
-          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
-            <CardHeader className="p-4">
-              <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
-                Connect to Cloud Account
-              </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                Connect to your cloud provider to begin analyzing resources.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-4 flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
-                  <Cloud className="h-6 w-6 text-blue-500 dark:text-blue-400" />
-                </div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
-                  Connect your AWS, Azure, GCP, or IBM Cloud account.
-                </p>
-              </div>
-              <Button
-                  onClick={handleNavigateToCloudConnect}
-                  disabled={cloudConnected}
-                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
-              >
-                Connect To Cloud
-              </Button>
-            </CardContent>
-          </Card>
+    <Layout promptHistory={[]}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-7xl mx-auto p-6">
 
-          {/* Resource Creation Card */}
-          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
-            <CardHeader className="p-4">
-              <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
-                Create Resources In Cloud
-              </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                Create cloud resources with AI-generated code.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-4 flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
-                  <FileCode className="h-6 w-6 text-blue-500 dark:text-blue-400" />
-                </div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
-                  Describe resource configuration.
-                </p>
+        {/* Cloud Connect Card */}
+        <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
+          <CardHeader className="p-4">
+            <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+              Connect to Cloud Account
+            </CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-400">
+              Connect to your cloud provider to begin analyzing resources.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-4 flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
+                <Cloud className="h-6 w-6 text-blue-500 dark:text-blue-400" />
               </div>
-              <Button
-                  onClick={handleNavigateToResourceCreation}
-                  disabled={!cloudConnected || resourceCreated}
-                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
-              >
-                Create Resources
-              </Button>
-            </CardContent>
-          </Card>
+              <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                Connect your AWS, Azure, GCP, or IBM Cloud account.
+              </p>
+            </div>
+            <Button
+              onClick={handleNavigateToCloudConnect}
+              className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+            >
+              Connect To Cloud
+            </Button>
+          </CardContent>
+        </Card>
 
-          {/* Compliance Check Card */}
-          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
-            <CardHeader className="p-4">
-              <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
-                Analyze Resources for Compliance
-              </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                Analyze your resources against cloud security benchmarks controls.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-4 flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
-                  <Info className="h-6 w-6 text-blue-500 dark:text-blue-400" />
-                </div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
-                  Run compliance checks and get detailed reports.
-                </p>
+        {/* Resource Creation Card */}
+        <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
+          <CardHeader className="p-4">
+            <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+              Create Resources In Cloud
+            </CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-400">
+              Create cloud resources with AI-generated code.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-4 flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
+                <FileCode className="h-6 w-6 text-blue-500 dark:text-blue-400" />
               </div>
-              <Button
-                  onClick={handleNavigateToCompliance}
-                  disabled={!resourceCreated || complianceChecked}
-                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
-              >
-                Start Compliance Analysis
-              </Button>
-            </CardContent>
-          </Card>
+              <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                Describe resource configuration.
+              </p>
+            </div>
+            <Button
+              onClick={handleNavigateToResourceCreation}
+              disabled={!cloudConnected}
+              className={`rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 ${
+                cloudConnected
+                  ? "bg-blue-500 hover:bg-blue-600 text-white"
+                  : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+              }`}
+            >
+              Create Resources
+            </Button>
+          </CardContent>
+        </Card>
 
-          {/* Reset Progress Card */}
-          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
-            <CardHeader className="p-4">
-              <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
-                Reset Progress
-              </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                Clear your current session progress.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-4 flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
-                  <ClipboardCopy className="h-6 w-6 text-blue-500 dark:text-blue-400" />
-                </div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
-                  Reset cloud connection, resource creation and compliance analysis data.
-                </p>
+        {/* Compliance Check Card */}
+        <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
+          <CardHeader className="p-4">
+            <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+              Analyze Resources for Compliance
+            </CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-400">
+              Analyze your resources against cloud security benchmarks controls.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-4 flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
+                <Info className="h-6 w-6 text-blue-500 dark:text-blue-400" />
               </div>
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button
+              <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                Run compliance checks and get detailed reports.
+              </p>
+            </div>
+            <Button
+              onClick={handleNavigateToCompliance}
+              disabled={!cloudConnected || !resourceCreated}
+              className={`rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 ${
+                cloudConnected && resourceCreated
+                  ? "bg-blue-500 hover:bg-blue-600 text-white"
+                  : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+              }`}
+            >
+              Start Compliance Analysis
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Reset Progress Card */}
+        <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
+          <CardHeader className="p-4">
+            <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+              Reset Progress
+            </CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-400">
+              Clear your current session progress.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-4 flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
+                <ClipboardCopy className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                Reset cloud connection, resource creation and compliance analysis data.
+              </p>
+            </div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+                >
+                  Reset Progress
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-blue-50 dark:bg-gray-800 rounded-xl border-blue-200 dark:border-gray-700">
+                <DialogHeader>
+                  <DialogTitle className="text-gray-800 dark:text-white">
+                    Are you sure?
+                  </DialogTitle>
+                  <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
+                    This will clear all progress and cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="mt-4">
+                  <DialogClose asChild>
+                    <Button
                       variant="outline"
                       className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
-                  >
-                    Reset Progress
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="bg-blue-50 dark:bg-gray-800 rounded-xl border-blue-200 dark:border-gray-700">
-                  <DialogHeader>
-                    <DialogTitle className="text-gray-800 dark:text-white">
-                      Are you sure?
-                    </DialogTitle>
-                    <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
-                      This will clear all progress and cannot be undone.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter className="mt-4">
-                    <DialogClose asChild>
-                      <Button
-                          variant="outline"
-                          className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
-                      >
-                        Cancel
-                      </Button>
-                    </DialogClose>
-                    <Button
-                        onClick={handleResetProgress}
-                        className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
                     >
-                      Yes, Reset
+                      Cancel
                     </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </CardContent>
-          </Card>
-        </div>
-      </Layout>
+                  </DialogClose>
+                  <Button
+                    onClick={handleResetProgress}
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+                  >
+                    Yes, Reset
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
+        </Card>
+      </div>
+    </Layout>
   );
 };
 
