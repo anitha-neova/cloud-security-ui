@@ -12,6 +12,7 @@ import ResourceCreationPage from "./pages/ResourceCreationPage";
 import SupportPage from "./pages/SupportPage";
 import { ProgressProvider } from "@/context/ProgressContext";
 import ReportsPage from "@/pages/ReportsPage.tsx";
+import LogoutPage from "./pages/LogoutPage";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/compliance" element={<CompliancePage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/logout" element={<LogoutPage />} />
             <Route path="/login" element={<div className="min-h-screen bg-blue-50 dark:bg-gray-800 flex items-center justify-center text-gray-800 dark:text-white">Login Page</div>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
