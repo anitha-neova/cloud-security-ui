@@ -150,11 +150,30 @@ const CompliancePage = () => {
     }
   };
 
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   const handleEmailSend = async () => {
-    if (!recipientEmail.trim()) {
+    const emails = recipientEmail
+      .split(",")
+      .map((e) => e.trim())
+      .filter((e) => e.length > 0); // filter out empty entries
+
+    if (emails.length === 0) {
       toast({
         title: "Email Required",
-        description: "Please enter a valid email address.",
+        description: "Please enter at least one valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const invalidEmails = emails.filter((email) => !isValidEmail(email));
+
+    if (invalidEmails.length > 0) {
+      toast({
+        title: "Invalid Email(s)",
+        description: `Invalid email address(es): ${invalidEmails.join(", ")}`,
         variant: "destructive",
       });
       return;
@@ -162,7 +181,6 @@ const CompliancePage = () => {
 
     try {
       setIsEmailSending(true);
-      console.log("Sending email to:", recipientEmail); // Debug logging
       const response = await emailComplianceReport({ recipient_email: recipientEmail });
       toast({
         title: "Email Sent",
@@ -173,7 +191,7 @@ const CompliancePage = () => {
     } catch (error) {
       toast({
         title: "Email Failed",
-        description: `An error occurred: ${error instanceof Error ? error.message : "Unknown error"}`,
+        description: error instanceof Error ? error.message : "Unknown error",
         variant: "destructive",
       });
     } finally {
