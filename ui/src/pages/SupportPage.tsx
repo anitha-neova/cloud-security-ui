@@ -28,7 +28,7 @@ const SupportPage = () => {
 
     const formData = new FormData();
     formData.append("user_email", form.email);
-    formData.append("subject", `New Support Ticket from ${form.name}`);
+    formData.append("subject", `New Tech Support Ticket Raised`);
     formData.append("message_body", form.message);
 
     try {
@@ -115,10 +115,16 @@ const SupportPage = () => {
             {loading ? "Sending..." : "Send Query"}
           </Button>
           {status === "success" && (
-            <div className="bg-blue-50 dark:bg-gray-800 rounded-lg p-4 text-blue-600 dark:text-blue-400 text-sm">
-              Support email sent successfully. Ticket ID: <strong>{ticketId}</strong>.
-            </div>
+              <div className="bg-blue-50 dark:bg-gray-800 rounded-lg p-4 text-blue-600 dark:text-blue-400 text-sm space-y-1">
+                <p>
+                  Email successfully sent to the support team. Your ticket ID is <strong>{ticketId}</strong>. Please save this ID for future reference.
+                </p>
+                <p>
+                  Our team will get back to you soon.
+                </p>
+              </div>
           )}
+
           {status === "error" && (
             <div className="bg-blue-50 dark:bg-gray-800 rounded-lg p-4 text-red-600 dark:text-red-400 text-sm">
               Something went wrong while sending your request.

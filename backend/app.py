@@ -144,10 +144,10 @@ async def email_compliance_report(request: EmailRequest):
 
     try:
         msg = EmailMessage()
-        msg["Subject"] = "CIS Compliance Report"
+        msg["Subject"] = "neoComplianceAgent Report"
         msg["From"] = os.getenv("SENDER_EMAIL")
         msg["To"] = ", ".join(recipient_emails)
-        msg.set_content("Please find attached the CIS Compliance Report.")
+        msg.set_content("Please find attached AI Analyzed neoComplianceAgent Report.")
 
         with open(pdf_path, "rb") as f:
             file_data = f.read()
@@ -176,7 +176,7 @@ async def support_email(
     try:
         ticket_counter += 1
         timestamp = int(time.time())
-        ticket_id = f"NEOTICKET-{ticket_counter}-{timestamp}"
+        ticket_id = f"neoComplianceAgent_{ticket_counter}_{timestamp}"
 
         msg = EmailMessage()
         msg["Subject"] = f"[{ticket_id}] {subject}"
