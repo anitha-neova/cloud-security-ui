@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Home, FileText, LifeBuoy, LogOut } from "lucide-react";
+import { Home, FileText, LifeBuoy, LogOut, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProgress } from "@/context/ProgressContext";
 import {
@@ -24,6 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
   const { setCloudConnected, setResourceCreated, setComplianceChecked, setTerraformCode, setStep } = useProgress();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleLogout = () => {
     setCloudConnected(false);
@@ -46,7 +47,24 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
   ];
 
   return (
-      <aside className="w-64 bg-blue-50 dark:bg-gray-800 border-r border-blue-200 dark:border-gray-700 p-6 flex flex-col h-screen">
+      <aside
+          className={`${
+              isCollapsed ? "w-20" : "w-48"
+          } bg-blue-50 dark:bg-gray-800 border-r border-blue-200 dark:border-gray-700 p-4 flex flex-col h-screen transition-all duration-300`}
+      >
+        {/* Collapse/Expand Toggle */}
+        <div className="flex justify-end mb-4">
+          <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="text-blue-500 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-gray-700"
+          >
+            {isCollapsed ? <ChevronsRight size={20} /> : <ChevronsLeft size={20} />}
+          </Button>
+        </div>
+
+        {/* Navigation Items */}
         <div className="flex-1">
           <nav className="space-y-2">
             {navigation.map((item) => (
@@ -62,10 +80,12 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
                     }
                 >
                   <item.icon className="w-5 h-5" />
-                  {item.name}
+                  {!isCollapsed && <span>{item.name}</span>}
                 </NavLink>
             ))}
           </nav>
+
+          {/* Logout Button */}
           <div className="mt-4">
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
@@ -74,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
                     className="w-full flex items-center gap-3 p-3 rounded-lg text-sm font-medium text-blue-500 dark:text-blue-400 border-blue-500 dark:border-blue-400 hover:bg-blue-100 dark:hover:bg-gray-700 transition-all duration-200"
                 >
                   <LogOut className="w-5 h-5" />
-                  Logout
+                  {!isCollapsed && <span>Logout</span>}
                 </Button>
               </DialogTrigger>
               <DialogContent className="bg-blue-50 dark:bg-gray-800 rounded-xl border-blue-200 dark:border-gray-700">
@@ -106,7 +126,9 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
             </Dialog>
           </div>
         </div>
-        {promptHistory.length > 0 && (
+
+        {/* Prompt History */}
+        {!isCollapsed && promptHistory.length > 0 && (
             <div className="mt-6">
               <h3 className="text-sm font-semibold text-gray-800 dark:text-white">Prompt History</h3>
               <ul className="mt-2 space-y-2">
