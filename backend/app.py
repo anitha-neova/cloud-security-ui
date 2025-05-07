@@ -76,7 +76,7 @@ def verify_token(token: str):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-MONGO_URI = "mongodb+srv://saurabhneova09:vWUDgEkR4QaKBGIY@neova.ah1imrb.mongodb.net/?retryWrites=true&w=majority&appName=neova"
+MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 db = client["Neova"]
 users_collection = db['users']
