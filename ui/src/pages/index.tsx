@@ -145,6 +145,55 @@ const Index = () => {
           </CardContent>
         </Card>
 
+        {/* Terraform Code Display */}
+        {terraformCode && (
+            <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
+              <CardHeader className="p-4">
+                <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+                  AI Generated Terraform Code
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="space-y-4">
+                <pre className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+                  {terraformCode.slice(0, 300)}
+                  {terraformCode.length > 300 ? "..." : ""}
+                </pre>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                          variant="outline"
+                          className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+                      >
+                        View Full Code
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-blue-50 dark:bg-gray-800 rounded-xl border-blue-200 dark:border-gray-700 max-w-3xl">
+                      <DialogHeader>
+                        <DialogTitle className="text-gray-800 dark:text-white">
+                          Terraform Code
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="flex justify-end mb-2">
+                        <Button
+                            onClick={handleCopyCode}
+                            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+                            title="Copy to Clipboard"
+                        >
+                          <ClipboardCopy className="w-4 h-4" />
+                          Copy Code
+                        </Button>
+                      </div>
+                      <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-gray-700 rounded-lg p-3 overflow-auto max-h-[500px] text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap w-full">
+                        {terraformCode}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardContent>
+            </Card>
+        )}
+
         {/* Compliance Check Card */}
         <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
           <CardHeader className="p-4">
