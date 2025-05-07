@@ -29,6 +29,8 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useProgress } from "@/context/ProgressContext";
+import { v4 as uuidv4 } from "uuid";
 import Layout from "@/components/Layout";
 
 const CompliancePage = () => {
@@ -40,6 +42,7 @@ const CompliancePage = () => {
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [recipientEmail, setRecipientEmail] = useState("");
   const { toast } = useToast();
+  const { setReports } = useProgress();
 
   const simulateProgress = (targetProgress: number) => {
     return new Promise<void>((resolve) => {
@@ -84,7 +87,23 @@ const CompliancePage = () => {
       setCurrentStep("Complete");
       setProgress(100);
 
-      setComplianceData(response.compliance_data || {});
+      const complianceData = response.compliance_data || {};
+      setComplianceData(complianceData);
+
+      // Log response for debugging
+      console.log("Compliance data:", complianceData);
+
+      const content = Object.keys(complianceData).length > 0
+          ? JSON.stringify(complianceData, null, 2)
+          : "No compliance data returned from scan.";
+
+      const newReport = {
+        id: uuidv4(),
+        title: `Compliance Report ${new Date().toLocaleDateString()}`,
+        content,
+        date: new Date().toISOString(),
+      };
+      setReports((prev: any) => [...prev, newReport]);
 
       toast({
         title: "Report Generated",
@@ -154,64 +173,67 @@ const CompliancePage = () => {
   };
 
   return (
-    <Layout promptHistory={[]}>
-      <div className="space-y-6 max-w-3xl mx-auto">
-        <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
-          <CardHeader className="p-6">
-            <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
-              Compliance Check
-            </CardTitle>
-            <CardDescription className="text-gray-600 dark:text-gray-400">
-              Describe the specific compliance requirements or regulations you want to analyze.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            <Textarea
-              placeholder="e.g., Check S3 buckets for CIS compliance..."
-              className="min-h-[100px] border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700"
-              value={userPrompt}
-              onChange={(e) => setUserPrompt(e.target.value)}
-              disabled={isProcessing}
-            />
-          </CardContent>
-          <CardFooter className="p-6 flex justify-end">
-            <Button
-              onClick={handleGenerateReport}
-              disabled={isProcessing}
-              className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105"
-            >
-              {isProcessing ? "Processing..." : "Generate Compliance Report"}
-            </Button>
-          </CardFooter>
-        </Card>
-
-        {isProcessing && (
-          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
-            <CardHeader className="p-6">
+      <Layout promptHistory={[]}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto p-6">
+          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
+            <CardHeader className="p-4">
               <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
-                Processing
+                Compliance Check
               </CardTitle>
               <CardDescription className="text-gray-600 dark:text-gray-400">
-                {currentStep}
+                Describe the specific compliance requirements or regulations you want to analyze.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
-              <Progress
-                value={progress}
-                className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full"
-                indicatorClassName="bg-blue-500"
+            <CardContent className="p-4">
+              <Textarea
+                  placeholder="e.g., Check S3 buckets for CIS compliance..."
+                  className="min-h-[100px] border-blue-200 dark:border-gray-700 bg-blue-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg"
+                  value={userPrompt}
+                  onChange={(e) => setUserPrompt(e.target.value)}
+                  disabled={isProcessing}
               />
             </CardContent>
+            <CardFooter className="p-4 flex justify-end">
+              <Button
+                  onClick={handleGenerateReport}
+                  disabled={isProcessing}
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
+              >
+                {isProcessing ? "Processing..." : "Generate Compliance Report"}
+              </Button>
+            </CardFooter>
           </Card>
-        )}
 
-        {complianceData && (
-          <ComplianceReport
-            data={complianceData}
-            onDownload={handleDownloadReport}
-            onEmail={() => setEmailDialogOpen(true)}
-          />
-        )}
+          {isProcessing && (
+              <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
+                <CardHeader className="p-4">
+                  <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+                    Processing
+                  </CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-gray-400">
+                    {currentStep}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <Progress
+                      value={progress}
+                      className="h-2 bg-blue-100 dark:bg-gray-700 rounded-lg"
+                  />
+                </CardContent>
+              </Card>
+          )}
+
+          {complianceData && (
+              <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
+                <CardContent className="p-4">
+                  <ComplianceReport
+                      data={complianceData}
+                      onDownloadPDF={handleDownloadReport}
+                      onEmailReport={() => setEmailDialogOpen(true)} reportId={""}                  />
+                </CardContent>
+              </Card>
+          )}
+        </div>
 
         <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
           <DialogContent className="bg-blue-50 dark:bg-gray-800 rounded-xl border-blue-200 dark:border-gray-700">
@@ -219,29 +241,29 @@ const CompliancePage = () => {
               <DialogTitle className="text-gray-800 dark:text-white">
                 Send Compliance Report
               </DialogTitle>
-              <DialogDescription className="text-gray-600 dark:text-gray-400">
+              <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
                 Enter the email addresses (comma-separated) where the report should be sent.
               </DialogDescription>
             </DialogHeader>
             <Input
-              type="email"
-              placeholder="example@domain.com"
-              value={recipientEmail}
-              onChange={(e) => setRecipientEmail(e.target.value)}
-              className="border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700"
+                type="email"
+                placeholder="example@domain.com"
+                value={recipientEmail}
+                onChange={(e) => setRecipientEmail(e.target.value)}
+                className="border-blue-200 dark:border-gray-700 bg-blue-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg"
             />
             <DialogFooter className="mt-4">
               <DialogClose asChild>
                 <Button
-                  variant="outline"
-                  className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 hover:scale-105"
+                    variant="outline"
+                    className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
                 >
                   Cancel
                 </Button>
               </DialogClose>
               <Button
-                onClick={handleEmailSend}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105"
+                  onClick={handleEmailSend}
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
               >
                 <Mail className="w-4 h-4 mr-2" />
                 Send Email
@@ -249,8 +271,7 @@ const CompliancePage = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
-    </Layout>
+      </Layout>
   );
 };
 

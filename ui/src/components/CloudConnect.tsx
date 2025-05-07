@@ -8,29 +8,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 
-interface CloudFormSchema {
-  aws: {
-    accessKey: string;
-    secretKey: string;
-    region: string;
-  };
-  azure: {
-    tenantId: string;
-    clientId: string;
-    clientSecret: string;
-    subscriptionId: string;
-  };
-  gcp: {
-    projectId: string;
-    serviceAccountKey: string;
-    region: string;
-  };
-  ibm: {
-    apiKey: string;
-    region: string;
-  };
-}
-
 const awsSchema = z.object({
   accessKey: z.string().min(1, "Access Key is required"),
   secretKey: z.string().min(1, "Secret Key is required"),

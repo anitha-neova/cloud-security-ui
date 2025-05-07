@@ -1,150 +1,283 @@
-import { useState } from "react";
+import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { useProgress } from "@/context/ProgressContext";
-import CodeViewer from "@/components/CodeViewer";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogTrigger,
   DialogFooter,
-  DialogClose,
+  DialogClose
 } from "@/components/ui/dialog";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Cloud, FileCode, ClipboardCopy, Info } from "lucide-react";
+import { useProgress } from "@/context/ProgressContext";
+import { useToast } from "@/components/ui/use-toast";
 import Layout from "@/components/Layout";
 
 const Index = () => {
-  const { toast } = useToast();
   const navigate = useNavigate();
-  const { terraformCode, cloudConnected, resourceCreated, setTerraformCode, setCloudConnected, setResourceCreated } = useProgress();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const {
+    cloudConnected,
+    resourceCreated,
+    complianceChecked,
+    setStep,
+    terraformCode,
+    setCloudConnected,
+    setResourceCreated,
+    setTerraformCode,
+    setComplianceChecked,
+    reports,
+    setReports
+  } = useProgress();
+  const { toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+
+  const handleNavigateToCloudConnect = () => {
+    setStep(1);
+    navigate("/cloud-connect");
+  };
+
+  const handleNavigateToResourceCreation = () => {
+    setStep(2);
+    navigate("/resource-creation");
+  };
+
+  const handleNavigateToCompliance = () => {
+    setStep(3);
+    navigate("/compliance");
+  };
 
   const handleCopyCode = async () => {
-    try {
+    if (terraformCode) {
       await navigator.clipboard.writeText(terraformCode);
       toast({
-        title: "Code Copied",
-        description: "Terraform code has been copied to your clipboard.",
-      });
-    } catch (error) {
-      toast({
-        title: "Copy Failed",
-        description: "Failed to copy code to clipboard.",
-        variant: "destructive",
+        title: "Copied!",
+        description: "Terraform code copied to clipboard."
       });
     }
   };
 
   const handleResetProgress = () => {
-    setTerraformCode("");
     setCloudConnected(false);
     setResourceCreated(false);
-    setDialogOpen(false);
+    setComplianceChecked(false);
+    setTerraformCode("");
+    setStep(0);
+    setReports([]);
     toast({
-      title: "Progress Reset",
-      description: "Your progress has been reset successfully.",
+      title: "Progress reset",
+      description: "All progress has been cleared in the UI."
     });
+    setIsDialogOpen(false);
   };
 
   return (
-    <Layout promptHistory={[]}>
-      <div className="space-y-6 max-w-3xl mx-auto">
-        <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
-          <CardHeader className="p-6">
-            <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
-              Welcome to Cloud Compliance AI
-            </CardTitle>
-            <CardDescription className="text-gray-600 dark:text-gray-400">
-              Manage your cloud resources and ensure compliance with ease.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6 space-y-6">
-            <p className="text-base text-gray-600 dark:text-gray-400">
-              Start by connecting to your cloud provider, creating resources, or checking compliance.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+      <Layout promptHistory={[]}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto p-6">
+          {/* Cloud Connect Card */}
+          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
+            <CardHeader className="p-4">
+              <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+                Connect to Cloud
+              </CardTitle>
+              <CardDescription className="text-gray-600 dark:text-gray-400">
+                Connect to your cloud provider to begin analyzing resources.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-4 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
+                  <Cloud className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                  Connect your AWS, Azure, GCP, or IBM Cloud account.
+                </p>
+              </div>
               <Button
-                onClick={() => navigate("/cloud-connection")}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105"
+                  onClick={handleNavigateToCloudConnect}
+                  disabled={cloudConnected}
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
               >
-                Cloud Connection
+                Connect Cloud
               </Button>
-              <Button
-                onClick={() => navigate("/resource-creation")}
-                disabled={!cloudConnected}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
-              >
+            </CardContent>
+          </Card>
+
+          {/* Resource Creation Card */}
+          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
+            <CardHeader className="p-4">
+              <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
                 Resource Creation
-              </Button>
+              </CardTitle>
+              <CardDescription className="text-gray-600 dark:text-gray-400">
+                Create cloud resources with AI-generated Terraform code.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-4 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
+                  <FileCode className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                  Describe resources and generate Terraform code.
+                </p>
+              </div>
               <Button
-                onClick={() => navigate("/compliance")}
-                disabled={!resourceCreated}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
+                  onClick={handleNavigateToResourceCreation}
+                  disabled={!cloudConnected || resourceCreated}
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
               >
-                Compliance Check
+                Create Resources
               </Button>
-            </div>
-            {terraformCode && (
-              <CodeViewer
-                code={terraformCode}
-                onCopy={handleCopyCode}
-                onDownload={() => {
-                  const blob = new Blob([terraformCode], { type: "text/plain" });
-                  const url = window.URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = "main.tf";
-                  document.body.appendChild(a);
-                  a.click();
-                  window.URL.revokeObjectURL(url);
-                  document.body.removeChild(a);
-                }}
-              />
-            )}
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 hover:scale-105"
-                >
-                  Reset Progress
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-blue-50 dark:bg-gray-800 rounded-xl border-blue-200 dark:border-gray-700">
-                <DialogHeader>
-                  <DialogTitle className="text-gray-800 dark:text-white">
-                    Reset Progress
-                  </DialogTitle>
-                  <DialogDescription className="text-gray-600 dark:text-gray-400">
-                    Are you sure you want to reset your progress? This will clear all generated Terraform code and cloud connection status.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter className="mt-4">
-                  <DialogClose asChild>
-                    <Button
-                      variant="outline"
-                      className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 hover:scale-105"
-                    >
-                      Cancel
-                    </Button>
-                  </DialogClose>
+            </CardContent>
+          </Card>
+
+          {/* Compliance Check Card */}
+          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
+            <CardHeader className="p-4">
+              <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+                Compliance Check
+              </CardTitle>
+              <CardDescription className="text-gray-600 dark:text-gray-400">
+                Generate compliance reports and analyze your cloud infrastructure.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-4 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
+                  <Info className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                  Run compliance checks and get detailed reports.
+                </p>
+              </div>
+              <Button
+                  onClick={handleNavigateToCompliance}
+                  disabled={!resourceCreated || complianceChecked}
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
+              >
+                Compliance Analysis
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Terraform Code Display */}
+          {terraformCode && (
+              <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
+                <CardHeader className="p-4">
+                  <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+                    Generated Terraform Code
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="space-y-4">
+                <pre className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+                  {terraformCode.slice(0, 300)}
+                  {terraformCode.length > 300 ? "..." : ""}
+                </pre>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                            variant="outline"
+                            className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+                        >
+                          View Full Code
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-blue-50 dark:bg-gray-800 rounded-xl border-blue-200 dark:border-gray-700 max-w-3xl">
+                        <DialogHeader>
+                          <DialogTitle className="text-gray-800 dark:text-white">
+                            Terraform Code
+                          </DialogTitle>
+                        </DialogHeader>
+                        <div className="flex justify-end mb-2">
+                          <Button
+                              onClick={handleCopyCode}
+                              className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+                              title="Copy to Clipboard"
+                          >
+                            <ClipboardCopy className="w-4 h-4" />
+                            Copy Code
+                          </Button>
+                        </div>
+                        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-gray-700 rounded-lg p-3 overflow-auto max-h-[500px] text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap w-full">
+                          {terraformCode}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CardContent>
+              </Card>
+          )}
+
+          {/* Reset Progress Card */}
+          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
+            <CardHeader className="p-4">
+              <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+                Reset Progress
+              </CardTitle>
+              <CardDescription className="text-gray-600 dark:text-gray-400">
+                Clear your session's progress in the UI.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-4 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-full bg-blue-100 dark:bg-gray-700">
+                  <ClipboardCopy className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                  Reset cloud connection, resources, and compliance.
+                </p>
+              </div>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
                   <Button
-                    onClick={handleResetProgress}
-                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105"
+                      variant="outline"
+                      className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
                   >
-                    Reset
+                    Reset Progress
                   </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </CardContent>
-        </Card>
-      </div>
-    </Layout>
+                </DialogTrigger>
+                <DialogContent className="bg-blue-50 dark:bg-gray-800 rounded-xl border-blue-200 dark:border-gray-700">
+                  <DialogHeader>
+                    <DialogTitle className="text-gray-800 dark:text-white">
+                      Are you sure?
+                    </DialogTitle>
+                    <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
+                      This will clear all progress and cannot be undone.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter className="mt-4">
+                    <DialogClose asChild>
+                      <Button
+                          variant="outline"
+                          className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+                      >
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button
+                        onClick={handleResetProgress}
+                        className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+                    >
+                      Yes, Reset
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </CardContent>
+          </Card>
+        </div>
+      </Layout>
   );
 };
 
