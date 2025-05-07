@@ -186,7 +186,7 @@ const Index = () => {
                   <ClipboardCopy className="h-6 w-6 text-blue-500 dark:text-blue-400" />
                 </div>
                 <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
-                  Reset cloud connection, resources, and compliance.
+                  Reset cloud connection, resource creation and compliance analysis data.
                 </p>
               </div>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
