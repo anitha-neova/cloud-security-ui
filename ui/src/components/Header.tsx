@@ -35,15 +35,14 @@ const Header = ({className}: HeaderProps) => {
                 {/* Left Side: Logo and Title */}
                 <div className="flex items-center space-x-20">
                     <img
-                        src="/neova_solutions_logo.jpeg"
+                        src="/neova_solutions_logo.png"
                         alt="Neova Solutions Logo"
-                        className="h-24 w-auto rounded-md shadow-sm transition-transform hover:scale-105"
+                        className="h-24 w-30"
                     />
                     <h1
-                        className="font-bold text-2xl cursor-pointer text-blue-600 dark:text-blue-400"
-                        onClick={() => navigate("/")}
+                        className="font-bold text-3xl text-blue-600 dark:text-blue-400"
                     >
-                        Cloud Compliance AI
+                        neoComplianceAgent
                     </h1>
                 </div>
 

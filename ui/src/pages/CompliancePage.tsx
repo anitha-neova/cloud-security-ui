@@ -20,7 +20,6 @@ import {
 } from "@/services/api";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -39,6 +38,8 @@ const CompliancePage = () => {
   const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [complianceData, setComplianceData] = useState<any>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isEmailSending, setIsEmailSending] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [recipientEmail, setRecipientEmail] = useState("");
   const { toast } = useToast();
@@ -122,6 +123,7 @@ const CompliancePage = () => {
 
   const handleDownloadReport = async () => {
     try {
+      setIsDownloading(true);
       const blob = await downloadComplianceReport();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -142,6 +144,8 @@ const CompliancePage = () => {
         description: `An error occurred: ${error instanceof Error ? error.message : "Unknown error"}`,
         variant: "destructive",
       });
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -156,6 +160,8 @@ const CompliancePage = () => {
     }
 
     try {
+      setIsEmailSending(true);
+      console.log("Sending email to:", recipientEmail); // Debug logging
       const response = await emailComplianceReport({ recipient_email: recipientEmail });
       toast({
         title: "Email Sent",
@@ -169,6 +175,8 @@ const CompliancePage = () => {
         description: `An error occurred: ${error instanceof Error ? error.message : "Unknown error"}`,
         variant: "destructive",
       });
+    } finally {
+      setIsEmailSending(false);
     }
   };
 
@@ -178,16 +186,31 @@ const CompliancePage = () => {
           <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
             <CardHeader className="p-4">
               <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
-                Compliance Check
+                Analyze Created Resources Against Compliance Benchmarks
               </CardTitle>
               <CardDescription className="text-gray-600 dark:text-gray-400">
-                Describe the specific compliance requirements or regulations you want to analyze.
+                Paste your API cURL commands to initiate a cloud account scan and generate a compliance analysis report.
+                <p className="text-gray-700 dark:text-gray-300 mt-2">
+                  Ensure that the cURL commands include the correct request body and headers for a successful scan.
+                </p>
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4">
               <Textarea
-                  placeholder="e.g., Check S3 buckets for CIS compliance..."
-                  className="min-h-[100px] border-blue-200 dark:border-gray-700 bg-blue-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg"
+                  placeholder={`e.g., Run the following:
+                1. Get bearer token:
+                curl -X POST <api_endpoint_url> -H "Content-Type: application/vnd.api+json" -d '{"data":{"type":"tokens","attributes":{"email":"<username>","password":"<password>"}}}'
+                
+                2. Use token to start scan:
+                curl -X POST <scan_account_api_endpoint> -H "Authorization: Bearer $BEARER_TOKEN" -H "Content-Type: application/vnd.api+json"
+                
+                3. Extract scan_id from the response.
+                
+                4. Get findings:
+                curl -X GET "<cloud_findings_api_endpoint>?scan_id=SCAN_ID" -H "Authorization: Bearer $BEARER_TOKEN" -H "Content-Type: application/vnd.api+json"
+                
+                5. Save the JSON response to a file and analyze it for CIS compliance to generate a detailed report.`}
+                  className="min-h-[340px] resize-y border-blue-200 dark:border-gray-700 bg-blue-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg"
                   value={userPrompt}
                   onChange={(e) => setUserPrompt(e.target.value)}
                   disabled={isProcessing}
@@ -199,7 +222,7 @@ const CompliancePage = () => {
                   disabled={isProcessing}
                   className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
               >
-                {isProcessing ? "Processing..." : "Generate Compliance Report"}
+                {isProcessing ? "Processing..." : "Start Analysis"}
               </Button>
             </CardFooter>
           </Card>
@@ -229,7 +252,10 @@ const CompliancePage = () => {
                   <ComplianceReport
                       data={complianceData}
                       onDownloadPDF={handleDownloadReport}
-                      onEmailReport={() => setEmailDialogOpen(true)} reportId={""}                  />
+                      onEmailReport={() => setEmailDialogOpen(true)}
+                      reportId=""
+                      isDownloading={isDownloading}
+                  />
                 </CardContent>
               </Card>
           )}
@@ -251,22 +277,25 @@ const CompliancePage = () => {
                 value={recipientEmail}
                 onChange={(e) => setRecipientEmail(e.target.value)}
                 className="border-blue-200 dark:border-gray-700 bg-blue-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg"
+                disabled={isEmailSending}
             />
             <DialogFooter className="mt-4">
               <DialogClose asChild>
                 <Button
                     variant="outline"
                     className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+                    disabled={isEmailSending}
                 >
                   Cancel
                 </Button>
               </DialogClose>
               <Button
                   onClick={handleEmailSend}
-                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+                  disabled={isEmailSending}
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
               >
                 <Mail className="w-4 h-4 mr-2" />
-                Send Email
+                {isEmailSending ? "Sending Email..." : "Send Email"}
               </Button>
             </DialogFooter>
           </DialogContent>

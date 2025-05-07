@@ -37,18 +37,18 @@ const CloudConnectionPage = () => {
       setCloudConnected(true);
 
       toast({
-        title: "Cloud Connected",
+        title: `${provider.toUpperCase()} Account Connected`,
         description: `Successfully connected to ${provider.toUpperCase()}`,
       });
 
       // Redirect to homepage after successful connection
-      navigate("/");  // Navigate to the homepage instead of resource creation page
+      navigate("/");  // Navigate to the homepage instead of the resource creation page
 
     } catch (error) {
       console.error("Connection error:", error);
       toast({
         title: "Connection Failed",
-        description: error instanceof Error ? error.message : "Failed to connect to cloud provider",
+        description: error instanceof Error ? error.message : `Failed to connect to cloud provider ${provider.toUpperCase()}`,
         variant: "destructive",
       });
     } finally {

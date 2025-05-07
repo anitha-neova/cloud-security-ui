@@ -123,6 +123,7 @@ const ResourceCreationPage = () => {
     }
   };
 
+  // @ts-ignore
   return (
     <Layout promptHistory={[]}>
       <div className="space-y-6 max-w-3xl mx-auto">
@@ -132,7 +133,7 @@ const ResourceCreationPage = () => {
               Resource Creation
             </CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400">
-              Select a cloud resource type and describe the parameters to generate Terraform code.
+              Select a cloud resource type you want to create and describe the configuration to generate IaC code.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6 space-y-4">
@@ -141,14 +142,14 @@ const ResourceCreationPage = () => {
                 <SelectValue placeholder="Choose a resource type..." />
               </SelectTrigger>
               <SelectContent className="border-gray-200 rounded-lg dark:border-gray-700 bg-white dark:bg-gray-800">
-                <SelectItem value="Create s3 bucket">S3 Bucket</SelectItem>
-                <SelectItem value="Create ec2 instance">EC2 Instance</SelectItem>
-                <SelectItem value="Create rds database">RDS Database</SelectItem>
-                <SelectItem value="Create lambda function">Lambda Function</SelectItem>
+                <SelectItem value="Create s3 bucket with">S3 Bucket</SelectItem>
+                <SelectItem value="Create ec2 instance with">EC2 Instance</SelectItem>
+                <SelectItem value="Create rds database with">RDS Database</SelectItem>
+                <SelectItem value="Create lambda function with">Lambda Function</SelectItem>
               </SelectContent>
             </Select>
             <Textarea
-              placeholder="Please specify parameters e.g., with public access disabled"
+              placeholder="Please specify resource configuration like -  bucket public access diabled and bucket name as test-123"
               className="min-h-[100px] border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700"
               value={userPrompt}
               onChange={(e) => setUserPrompt(e.target.value)}

@@ -75,7 +75,7 @@ const Index = () => {
     setReports([]);
     toast({
       title: "Progress reset",
-      description: "All progress has been cleared in the UI."
+      description: "All current progress has been cleared."
     });
     setIsDialogOpen(false);
   };
@@ -87,7 +87,7 @@ const Index = () => {
           <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
             <CardHeader className="p-4">
               <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
-                Connect to Cloud
+                Connect to Cloud Account
               </CardTitle>
               <CardDescription className="text-gray-600 dark:text-gray-400">
                 Connect to your cloud provider to begin analyzing resources.
@@ -107,7 +107,7 @@ const Index = () => {
                   disabled={cloudConnected}
                   className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
               >
-                Connect Cloud
+                Connect To Cloud
               </Button>
             </CardContent>
           </Card>
@@ -116,10 +116,10 @@ const Index = () => {
           <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
             <CardHeader className="p-4">
               <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
-                Resource Creation
+                Create Resources In Cloud
               </CardTitle>
               <CardDescription className="text-gray-600 dark:text-gray-400">
-                Create cloud resources with AI-generated Terraform code.
+                Create cloud resources with AI-generated code.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4 flex flex-col gap-4">
@@ -128,7 +128,7 @@ const Index = () => {
                   <FileCode className="h-6 w-6 text-blue-500 dark:text-blue-400" />
                 </div>
                 <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
-                  Describe resources and generate Terraform code.
+                  Describe resource configuration.
                 </p>
               </div>
               <Button
@@ -145,10 +145,10 @@ const Index = () => {
           <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">
             <CardHeader className="p-4">
               <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
-                Compliance Check
+                Analyze Resources for Compliance
               </CardTitle>
               <CardDescription className="text-gray-600 dark:text-gray-400">
-                Generate compliance reports and analyze your cloud infrastructure.
+                Analyze your resources against cloud security benchmarks controls.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4 flex flex-col gap-4">
@@ -165,7 +165,7 @@ const Index = () => {
                   disabled={!resourceCreated || complianceChecked}
                   className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
               >
-                Compliance Analysis
+                Start Compliance Analysis
               </Button>
             </CardContent>
           </Card>
@@ -175,7 +175,7 @@ const Index = () => {
               <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
                 <CardHeader className="p-4">
                   <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
-                    Generated Terraform Code
+                    AI Generated Terraform Code
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-4">
@@ -226,7 +226,7 @@ const Index = () => {
                 Reset Progress
               </CardTitle>
               <CardDescription className="text-gray-600 dark:text-gray-400">
-                Clear your session's progress in the UI.
+                Clear your current session progress.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4 flex flex-col gap-4">

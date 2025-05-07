@@ -9,3 +9,6 @@ main.tf
 terraform.tfstate.backup
 *.pdf
 *.xlsx
+*.tfstate
+.terraform.lock.hcl
+.terraform/
