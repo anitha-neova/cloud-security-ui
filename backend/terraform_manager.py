@@ -5,12 +5,6 @@ import logging
 from openai import OpenAI
 from dotenv import load_dotenv
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[logging.FileHandler("cis_api_scanner_logs.log", encoding='utf-8'), logging.StreamHandler()]
-)
-
 # Load environment variables
 load_dotenv()
 
@@ -112,9 +106,6 @@ class TerraformManager:
             logging.info("✅ Code generated successfully!")
             logging.info(f"{formatted_code}")
 
-            if not skip_execution:
-                logging.info("Executing generated code to create resources...")
-                self.execute_terraform()
         else:
             logging.error("❌ Failed to generate Terraform code.")
 

@@ -6,12 +6,6 @@ import re
 import os
 from openai import OpenAI
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[logging.FileHandler("cis_api_scanner_logs.log", encoding='utf-8'), logging.StreamHandler()]
-)
-
 class ComplianceManager:
     def __init__(self, openai_key: str):
         self.client = OpenAI(api_key=openai_key)

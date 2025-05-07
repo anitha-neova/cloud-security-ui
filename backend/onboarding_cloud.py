@@ -4,9 +4,6 @@ import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-# Setup logger
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-
 # Initialize the router for onboarding
 router = APIRouter()
 
