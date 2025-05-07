@@ -28,7 +28,7 @@ const SupportPage = () => {
 
     const formData = new FormData();
     formData.append("user_email", form.email);
-    formData.append("subject", `New Tech Support Ticket Raised`);
+    formData.append("subject", `Tech Support Ticket Raised`);
     formData.append("message_body", form.message);
 
     try {
