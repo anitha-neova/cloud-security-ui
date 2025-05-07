@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -181,23 +182,27 @@ const CompliancePage = () => {
   };
 
   return (
-      <Layout promptHistory={[]}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto p-6">
-          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
-            <CardHeader className="p-4">
-              <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
-                Analyze Created Resources Against Compliance Benchmarks
-              </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                Paste your API cURL commands to initiate a cloud account scan and generate a compliance analysis report.
-                <p className="text-gray-700 dark:text-gray-300 mt-2">
-                  Ensure that the cURL commands include the correct request body and headers for a successful scan.
-                </p>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-4">
-              <Textarea
-                  placeholder={`e.g., Run the following:
+      <div className="min-h-screen bg-background flex flex-col">
+        <Helmet>
+          <title>neoComplianceAgent | Compliance Scan</title>
+        </Helmet>
+        <Layout promptHistory={[]}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto p-6">
+            <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
+              <CardHeader className="p-4">
+                <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
+                  Analyze Created Resources Against Compliance Benchmarks
+                </CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400">
+                  Paste your API cURL commands to initiate a cloud account scan and generate a compliance analysis report.
+                  <p className="text-gray-700 dark:text-gray-300 mt-2">
+                    Ensure that the cURL commands include the correct request body and headers for a successful scan.
+                  </p>
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-4">
+                <Textarea
+                    placeholder={`e.g., Run the following:
                 1. Get bearer token:
                 curl -X POST <api_endpoint_url> -H "Content-Type: application/vnd.api+json" -d '{"data":{"type":"tokens","attributes":{"email":"<username>","password":"<password>"}}}'
                 
@@ -210,97 +215,99 @@ const CompliancePage = () => {
                 curl -X GET "<cloud_findings_api_endpoint>?scan_id=SCAN_ID" -H "Authorization: Bearer $BEARER_TOKEN" -H "Content-Type: application/vnd.api+json"
                 
                 5. Save the JSON response to a file and analyze it for CIS compliance to generate a detailed report.`}
-                  className="min-h-[340px] resize-y border-blue-200 dark:border-gray-700 bg-blue-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg"
-                  value={userPrompt}
-                  onChange={(e) => setUserPrompt(e.target.value)}
-                  disabled={isProcessing}
-              />
-            </CardContent>
-            <CardFooter className="p-4 flex justify-end">
-              <Button
-                  onClick={handleGenerateReport}
-                  disabled={isProcessing}
-                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
-              >
-                {isProcessing ? "Processing..." : "Start Analysis"}
-              </Button>
-            </CardFooter>
-          </Card>
-
-          {isProcessing && (
-              <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
-                <CardHeader className="p-4">
-                  <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
-                    Processing
-                  </CardTitle>
-                  <CardDescription className="text-gray-600 dark:text-gray-400">
-                    {currentStep}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <Progress
-                      value={progress}
-                      className="h-2 bg-blue-100 dark:bg-gray-700 rounded-lg"
-                  />
-                </CardContent>
-              </Card>
-          )}
-
-          {complianceData && (
-              <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
-                <CardContent className="p-4">
-                  <ComplianceReport
-                      data={complianceData}
-                      onDownloadPDF={handleDownloadReport}
-                      onEmailReport={() => setEmailDialogOpen(true)}
-                      reportId=""
-                      isDownloading={isDownloading}
-                  />
-                </CardContent>
-              </Card>
-          )}
-        </div>
-
-        <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
-          <DialogContent className="bg-blue-50 dark:bg-gray-800 rounded-xl border-blue-200 dark:border-gray-700">
-            <DialogHeader>
-              <DialogTitle className="text-gray-800 dark:text-white">
-                Send Compliance Report
-              </DialogTitle>
-              <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
-                Enter the email addresses (comma-separated) where the report should be sent.
-              </DialogDescription>
-            </DialogHeader>
-            <Input
-                type="email"
-                placeholder="example@domain.com"
-                value={recipientEmail}
-                onChange={(e) => setRecipientEmail(e.target.value)}
-                className="border-blue-200 dark:border-gray-700 bg-blue-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg"
-                disabled={isEmailSending}
-            />
-            <DialogFooter className="mt-4">
-              <DialogClose asChild>
+                    className="min-h-[340px] resize-y border-blue-200 dark:border-gray-700 bg-blue-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg"
+                    value={userPrompt}
+                    onChange={(e) => setUserPrompt(e.target.value)}
+                    disabled={isProcessing}
+                />
+              </CardContent>
+              <CardFooter className="p-4 flex justify-end">
                 <Button
-                    variant="outline"
-                    className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
-                    disabled={isEmailSending}
+                    onClick={handleGenerateReport}
+                    disabled={isProcessing}
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
                 >
-                  Cancel
+                  {isProcessing ? "Processing..." : "Start Analysis"}
                 </Button>
-              </DialogClose>
-              <Button
-                  onClick={handleEmailSend}
+              </CardFooter>
+            </Card>
+
+            {isProcessing && (
+                <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
+                  <CardHeader className="p-4">
+                    <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+                      Processing
+                    </CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-400">
+                      {currentStep}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <Progress
+                        value={progress}
+                        className="h-2 bg-blue-100 dark:bg-gray-700 rounded-lg"
+                    />
+                  </CardContent>
+                </Card>
+            )}
+
+            {complianceData && (
+                <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
+                  <CardContent className="p-4">
+                    <ComplianceReport
+                        data={complianceData}
+                        onDownloadPDF={handleDownloadReport}
+                        onEmailReport={() => setEmailDialogOpen(true)}
+                        reportId=""
+                        isDownloading={isDownloading}
+                    />
+                  </CardContent>
+                </Card>
+            )}
+          </div>
+
+          <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
+            <DialogContent className="bg-blue-50 dark:bg-gray-800 rounded-xl border-blue-200 dark:border-gray-700">
+              <DialogHeader>
+                <DialogTitle className="text-gray-800 dark:text-white">
+                  Send Compliance Report
+                </DialogTitle>
+                <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
+                  Enter the email addresses (comma-separated) where the report should be sent.
+                </DialogDescription>
+              </DialogHeader>
+              <Input
+                  type="email"
+                  placeholder="example@domain.com"
+                  value={recipientEmail}
+                  onChange={(e) => setRecipientEmail(e.target.value)}
+                  className="border-blue-200 dark:border-gray-700 bg-blue-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg"
                   disabled={isEmailSending}
-                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
-              >
-                <Mail className="w-4 h-4 mr-2" />
-                {isEmailSending ? "Sending Email..." : "Send Email"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </Layout>
+              />
+              <DialogFooter className="mt-4">
+                <DialogClose asChild>
+                  <Button
+                      variant="outline"
+                      className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
+                      disabled={isEmailSending}
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button
+                    onClick={handleEmailSend}
+                    disabled={isEmailSending}
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:hover:scale-100"
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  {isEmailSending ? "Sending Email..." : "Send Email"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </Layout>
+      </div>
+
   );
 };
 

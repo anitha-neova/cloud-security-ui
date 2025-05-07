@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import CloudConnect from "@/components/CloudConnect";
@@ -67,7 +68,10 @@ const CloudConnectionPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col">
+        <Helmet>
+          <title>neoComplianceAgent | Connect To Cloud</title>
+        </Helmet>
       <Header />
 
       <main className="flex-1 p-6 overflow-y-auto">

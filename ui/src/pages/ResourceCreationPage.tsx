@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -125,69 +126,75 @@ const ResourceCreationPage = () => {
 
   // @ts-ignore
   return (
-    <Layout promptHistory={[]}>
-      <div className="space-y-6 max-w-3xl mx-auto">
-        <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
-          <CardHeader className="p-6">
-            <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
-              Resource Creation
-            </CardTitle>
-            <CardDescription className="text-gray-600 dark:text-gray-400">
-              Select a cloud resource type you want to create and describe the configuration to generate IaC code.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6 space-y-4">
-            <Select value={selectedResource} onValueChange={setSelectedResource}>
-              <SelectTrigger className="border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700">
-                <SelectValue placeholder="Choose a resource type..." />
-              </SelectTrigger>
-              <SelectContent className="border-gray-200 rounded-lg dark:border-gray-700 bg-white dark:bg-gray-800">
-                <SelectItem value="Create s3 bucket with">S3 Bucket</SelectItem>
-                <SelectItem value="Create ec2 instance with">EC2 Instance</SelectItem>
-                <SelectItem value="Create rds database with">RDS Database</SelectItem>
-                <SelectItem value="Create lambda function with">Lambda Function</SelectItem>
-              </SelectContent>
-            </Select>
-            <Textarea
-              placeholder="Please specify resource configuration like -  bucket public access diabled and bucket name as test-123"
-              className="min-h-[100px] border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700"
-              value={userPrompt}
-              onChange={(e) => setUserPrompt(e.target.value)}
-              disabled={isProcessing}
-            />
-          </CardContent>
-          <CardFooter className="p-6 flex justify-end">
-            <Button
-              onClick={handleCreateResource}
-              disabled={isProcessing}
-              className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105"
-            >
-              {isProcessing ? "Processing..." : "Create Resource"}
-            </Button>
-          </CardFooter>
-        </Card>
+      <div className="min-h-screen bg-background flex flex-col">
+        <Helmet>
+          <title>neoComplianceAgent | Create Resources</title>
+        </Helmet>
+        <Layout promptHistory={[]}>
+          <div className="space-y-6 max-w-3xl mx-auto">
+            <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
+              <CardHeader className="p-6">
+                <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
+                  Resource Creation
+                </CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400">
+                  Select a cloud resource type you want to create and describe the configuration to generate IaC code.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <Select value={selectedResource} onValueChange={setSelectedResource}>
+                  <SelectTrigger className="border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700">
+                    <SelectValue placeholder="Choose a resource type..." />
+                  </SelectTrigger>
+                  <SelectContent className="border-gray-200 rounded-lg dark:border-gray-700 bg-white dark:bg-gray-800">
+                    <SelectItem value="Create s3 bucket with">S3 Bucket</SelectItem>
+                    <SelectItem value="Create ec2 instance with">EC2 Instance</SelectItem>
+                    <SelectItem value="Create rds database with">RDS Database</SelectItem>
+                    <SelectItem value="Create lambda function with">Lambda Function</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Textarea
+                    placeholder="Please specify resource configuration like -  bucket public access diabled and bucket name as test-123"
+                    className="min-h-[100px] border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700"
+                    value={userPrompt}
+                    onChange={(e) => setUserPrompt(e.target.value)}
+                    disabled={isProcessing}
+                />
+              </CardContent>
+              <CardFooter className="p-6 flex justify-end">
+                <Button
+                    onClick={handleCreateResource}
+                    disabled={isProcessing}
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105"
+                >
+                  {isProcessing ? "Processing..." : "Create Resource"}
+                </Button>
+              </CardFooter>
+            </Card>
 
-        {isProcessing && (
-          <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
-            <CardHeader className="p-6">
-              <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
-                Processing
-              </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                {currentStep}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <Progress
-                value={progress}
-                className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full"
-                indicatorClassName="bg-blue-500"
-              />
-            </CardContent>
-          </Card>
-        )}
+            {isProcessing && (
+                <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
+                  <CardHeader className="p-6">
+                    <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
+                      Processing
+                    </CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-400">
+                      {currentStep}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <Progress
+                        value={progress}
+                        className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full"
+                        indicatorClassName="bg-blue-500"
+                    />
+                  </CardContent>
+                </Card>
+            )}
+          </div>
+        </Layout>
       </div>
-    </Layout>
+
   );
 };
 
