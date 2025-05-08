@@ -41,9 +41,17 @@ const LoginPage = () => {
       <div className="min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-2xl p-8 sm:p-12 w-full max-w-xl">
           <div className="flex flex-col items-center mb-8">
-            <img src="/neova_solutions_logo.png" alt="Neova Solutions Logo" className="w-18 h-18 mb-4" />
-            <h1 className="text-2xl sm:text-2xl font-bold text-slate-800">Welcome To neoComplianceAgent</h1>
-            <p className="text-slate-600 font-bold text-sm sm:text-base text-center">An AI-Powered Cloud Compliance Solution</p>
+            <img
+                src="/neova_solutions_logo.png"
+                alt="Neova Solutions Logo"
+                className="w-auto h-auto mb-3 drop-shadow-md"
+            />
+            <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-teal-400 dark:from-blue-400 dark:via-cyan-400 dark:to-green-300 text-center leading-snug">
+              Welcome to neoComplianceAgent
+            </h1>
+            <p className="mt-2 text-base sm:text-lg text-gray-700 dark:text-gray-300 text-center max-w-sm">
+              An <span className="font-semibold text-blue-600 dark:text-blue-400">AI-Powered</span> Cloud Compliance Solution
+            </p>
           </div>
           <p className="text-slate-700 text-xs sm:text-sm text-center mt-4">Enter your credentials to begin using neoComplianceAgent</p> {/* Adjusted mt-6 for more space */}
           {error && (
