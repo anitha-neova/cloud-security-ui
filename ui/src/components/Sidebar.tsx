@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Home, FileText, LifeBuoy, LogOut, Key, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Home, FileText, LifeBuoy, LogOut, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProgress } from "@/context/ProgressContext";
 import {
@@ -40,14 +40,13 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
       description: "You have been successfully logged out.",
     });
     setIsDialogOpen(false);
-    navigate("/logout"); // Navigate to logout page
+    navigate("/logout");
   };
 
   const navigation = [
     { name: "Home", href: "/dashboard", icon: Home },
     { name: "Report", href: "/reports", icon: FileText },
     { name: "Support", href: "/support", icon: LifeBuoy },
-    { name: "Reset Password", href: "/reset-password", icon: Key },
   ];
 
   return (
@@ -56,7 +55,6 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
               isCollapsed ? "w-20" : "w-48"
           } bg-blue-50 dark:bg-gray-800 border-r border-blue-200 dark:border-gray-700 p-4 flex flex-col h-screen transition-all duration-300`}
       >
-        {/* Collapse/Expand Toggle */}
         <div className="flex justify-end mb-4">
           <Button
               variant="ghost"
@@ -68,7 +66,6 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
           </Button>
         </div>
 
-        {/* Navigation Items */}
         <div className="flex-1">
           <nav className="space-y-2">
             {navigation.map((item) => (
@@ -89,7 +86,6 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
             ))}
           </nav>
 
-          {/* Logout Button */}
           <div className="mt-4">
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
@@ -121,7 +117,8 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
                   </DialogClose>
                   <Button
                       onClick={handleLogout}
-                      className="bg-red-600 text-white hover:bg-red-700"                  >
+                      className="bg-red-600 text-white hover:bg-red-700"
+                  >
                     Yes, Logout
                   </Button>
                 </DialogFooter>
@@ -130,7 +127,6 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
           </div>
         </div>
 
-        {/* Prompt History */}
         {!isCollapsed && promptHistory.length > 0 && (
             <div className="mt-6">
               <h3 className="text-sm font-semibold text-gray-800 dark:text-white">Prompt History</h3>

@@ -1,4 +1,4 @@
-import { Bell, HelpCircle, Settings, Home } from "lucide-react";
+import { Bell, HelpCircle, Settings, Home, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -49,7 +49,6 @@ const Header = ({ className }: HeaderProps) => {
         <>
             <header className="bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700 sticky top-0 z-10 shadow-sm">
                 <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-                    {/* Left Side: Logo and Title */}
                     <div className="flex items-center space-x-4">
                         <img
                             src="/neova_solutions_logo.png"
@@ -58,7 +57,6 @@ const Header = ({ className }: HeaderProps) => {
                         />
                     </div>
 
-                    {/* Centered Title */}
                     <div className="flex flex-col justify-center items-center py-1 px-4">
                         <h1 className="font-Roboto font-extrabold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-teal-400 dark:from-blue-400 dark:via-cyan-400 dark:to-green-300 leading-snug text-center">
                             neoComplianceAgent
@@ -68,9 +66,7 @@ const Header = ({ className }: HeaderProps) => {
                         </p>
                     </div>
 
-                    {/* Right Side: Header Buttons */}
                     <div className="flex items-center space-x-2">
-                        {/* Home Button */}
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Button
@@ -87,7 +83,6 @@ const Header = ({ className }: HeaderProps) => {
                             </TooltipContent>
                         </Tooltip>
 
-                        {/* Notifications */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button
@@ -103,7 +98,6 @@ const Header = ({ className }: HeaderProps) => {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                        {/* Help */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button
@@ -126,7 +120,6 @@ const Header = ({ className }: HeaderProps) => {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                        {/* Settings */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button
@@ -144,6 +137,9 @@ const Header = ({ className }: HeaderProps) => {
                                 <DropdownMenuItem onClick={() => setTheme("dark")}>
                                     Dark Theme
                                 </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => navigate("/reset-password")}>
+                                    Reset Password
+                                </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => setIsLogoutDialogOpen(true)}>
                                     Logout
                                 </DropdownMenuItem>
@@ -153,7 +149,6 @@ const Header = ({ className }: HeaderProps) => {
                 </div>
             </header>
 
-            {/* Logout Confirmation Dialog */}
             <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
                 <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-800">
                     <DialogHeader>

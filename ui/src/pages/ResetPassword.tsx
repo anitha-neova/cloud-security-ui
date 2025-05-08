@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 
 const ResetPassword = () => {
     const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ const ResetPassword = () => {
     const [success, setSuccess] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const { toast } = useToast();
+    const navigate = useNavigate();
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
@@ -89,6 +91,16 @@ const ResetPassword = () => {
         }
     };
 
+    const handleCancel = () => {
+        setEmail("");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setError("");
+        setSuccess("");
+        navigate(-1);
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 flex items-center justify-center px-4">
             <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md">
@@ -155,12 +167,6 @@ const ResetPassword = () => {
                                 required
                                 disabled={isLoading}
                             />
-                            <ul className="mt-2 text-sm text-gray-600 dark:text-gray-400 list-disc list-inside">
-                                <li>Minimum 8 characters</li>
-                                <li>At least one uppercase letter</li>
-                                <li>At least one number</li>
-                                <li>At least one special character (!@#$%^&*)</li>
-                            </ul>
                         </div>
                         <div>
                             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -176,26 +182,34 @@ const ResetPassword = () => {
                                 required
                                 disabled={isLoading}
                             />
+                            <ul className="mt-2 text-sm text-gray-600 dark:text-gray-400 list-disc list-inside">
+                                <li>Minimum 8 characters</li>
+                                <li>At least one uppercase letter</li>
+                                <li>At least one number</li>
+                                <li>At least one special character (!@#$%^&*)</li>
+                            </ul>
                         </div>
-                        <button
-                            type="submit"
-                            className={`w-full bg-indigo-600 text-white font-semibold py-2 text-base rounded-md shadow-lg transition duration-300 ${
-                                isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-indigo-700"
-                            }`}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? "Resetting..." : "Reset Password"}
-                        </button>
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <button
+                                type="submit"
+                                className={`flex-1 bg-indigo-600 text-white font-semibold py-2 text-base rounded-md shadow-lg transition duration-300 ${
+                                    isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-indigo-700"
+                                }`}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? "Resetting..." : "Reset Password"}
+                            </button>
+                            <Button
+                                variant="outline"
+                                className="flex-1 border-indigo-600 text-indigo-600 hover:bg-indigo-100 dark:border-indigo-400 dark:text-indigo-400 dark:hover:bg-gray-700"
+                                onClick={handleCancel}
+                                disabled={isLoading}
+                            >
+                                Cancel
+                            </Button>
+                        </div>
                     </form>
                 )}
-                <div className="mt-4 text-center">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Back to{" "}
-                        <Link to="/login" className="text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-800 dark:hover:text-indigo-300">
-                            Login
-                        </Link>
-                    </p>
-                </div>
             </div>
         </div>
     );
