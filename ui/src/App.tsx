@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import CloudConnectionPage from "./pages/CloudConnectionPage";
@@ -16,7 +15,6 @@ import SignupPage from "./pages/SignupPage";
 import LogoutPage from "./pages/LogoutPage";
 import UserManagement from "./pages/UserManagement";
 import ResetPassword from "./pages/ResetPassword";
-
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { ProgressProvider } from "@/context/ProgressContext";
 import AdminContactPage from "@/pages/AdminContactPage.tsx";
