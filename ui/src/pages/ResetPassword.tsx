@@ -13,11 +13,38 @@ const ResetPassword = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { toast } = useToast();
 
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
     const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
         setSuccess("");
         setIsLoading(true);
+
+        if (currentPassword === newPassword) {
+            setError("New password cannot be the same as the current password.");
+            toast({
+                title: "Error",
+                description: "New password cannot be the same as the current password.",
+                variant: "destructive",
+            });
+            setIsLoading(false);
+            return;
+        }
+
+        if (!passwordRegex.test(newPassword)) {
+            setError(
+                "New password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character (!@#$%^&*)."
+            );
+            toast({
+                title: "Error",
+                description:
+                    "New password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character (!@#$%^&*).",
+                variant: "destructive",
+            });
+            setIsLoading(false);
+            return;
+        }
 
         if (newPassword !== confirmPassword) {
             setError("New password and confirm password do not match.");
@@ -128,6 +155,12 @@ const ResetPassword = () => {
                                 required
                                 disabled={isLoading}
                             />
+                            <ul className="mt-2 text-sm text-gray-600 dark:text-gray-400 list-disc list-inside">
+                                <li>Minimum 8 characters</li>
+                                <li>At least one uppercase letter</li>
+                                <li>At least one number</li>
+                                <li>At least one special character (!@#$%^&*)</li>
+                            </ul>
                         </div>
                         <div>
                             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
