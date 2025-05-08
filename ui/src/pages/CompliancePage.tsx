@@ -79,7 +79,8 @@ const CompliancePage = () => {
       await simulateProgress(30);
 
       setCurrentStep("Running compliance scan");
-      const response = await runComplianceScan({ prompt: userPrompt });
+      const userId = localStorage.getItem("user_id");
+      const response = await runComplianceScan({ prompt: userPrompt, user_id: userId });
 
       await simulateProgress(75);
 

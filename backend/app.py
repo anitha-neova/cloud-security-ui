@@ -5,7 +5,7 @@ import smtplib
 from datetime import datetime, timedelta
 from email.message import EmailMessage
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Form, Depends, Request
+from fastapi import FastAPI, HTTPException, Form, Depends, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.security import OAuth2PasswordBearer
@@ -13,11 +13,16 @@ from jose import JWTError, jwt
 from pydantic import BaseModel, EmailStr
 from pymongo import MongoClient
 from passlib.context import CryptContext
+from s3_utils import S3Utils
+
 from onboarding_cloud import router as onboard_cloud_router  # Import your onboarding router
 from compliance import create_terraform_resource, delete_reports, handle_compliance  # Import your compliance functions
 
 # Load environment variables
 load_dotenv()
+
+BUCKET_NAME = "neova-cloudsec-ai"
+
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "supersecretjwtkey")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
@@ -91,6 +96,7 @@ class ResourceProvisionRequest(BaseModel):
 
 class ComplianceRequest(BaseModel):
     prompt: str
+    user_id: str
 
 class EmailRequest(BaseModel):
     recipient_email: str
@@ -117,7 +123,7 @@ async def login(login_request: LoginRequest):
         raise HTTPException(status_code=400, detail="Invalid email or password.")
     token_data = {"sub": user["email"]}
     access_token = create_access_token(token_data)
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "user_id": str(user["_id"])}
 
 @app.post("/create_resource")
 async def create_resource(request: ResourceProvisionRequest):
@@ -136,13 +142,25 @@ async def run_compliance_scan(request: ComplianceRequest):
     try:
         await delete_reports()
         prompt = request.prompt
+        user_id = request.user_id
         if not prompt.strip():
             raise HTTPException(status_code=400, detail="Prompt cannot be empty.")
         result_msg, xlsx_path = await handle_compliance(prompt)
+        s3 = S3Utils()
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        s3_key = f"compliance-reports/{user_id}/cis_compliance_report_{timestamp}.pdf"
+        pdf_path = "cis_compliance_report.pdf"
+
+        if not os.path.exists(pdf_path):
+            raise HTTPException(status_code=500, detail="Compliance report PDF not found.")
+
+        s3.upload_file(pdf_path, BUCKET_NAME, s3_key)
         return {
             "message": result_msg,
-            "report_path": xlsx_path
+            "report_path": xlsx_path,
+            "s3_url": f"s3://{BUCKET_NAME}/{s3_key}"
         }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -228,6 +246,27 @@ async def support_email(
     except Exception as e:
         logging.error(f"Failed to send email: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
+
+
+@app.get("/list_compliance_reports")
+async def list_compliance_reports(user_id: str = Query(..., description="MongoDB user ID")):
+    try:
+        s3_prefix = f"compliance-reports/{user_id}/"
+        s3 = S3Utils()
+        file_keys = s3.list_files(BUCKET_NAME, s3_prefix)
+
+        files = []
+        for key in file_keys:
+            view_url = s3.generate_presigned_url(BUCKET_NAME, key, disposition='inline')
+            download_url = s3.generate_presigned_url(BUCKET_NAME, key, disposition='attachment')
+            files.append({"s3_key": key, "view_url": view_url, "download_url": download_url})
+
+        return JSONResponse(content={"files": files})
+
+    except Exception as e:
+        logging.error(f"❌ Error listing files: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to list compliance reports.")
+
 
 if __name__ == "__main__":
     import uvicorn
