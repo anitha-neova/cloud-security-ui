@@ -290,6 +290,41 @@ async def list_compliance_reports(user_id: str = Query(..., description="MongoDB
         raise HTTPException(status_code=500, detail="Failed to list compliance reports.")
 
 
+@app.post("/ask_admin")
+async def ask_admin(
+        user_email: str = Form(...),
+        subject: str = Form(...),
+        inquiry_body: str = Form(...)
+):
+    global inquiry_counter
+    try:
+        inquiry_counter += 1
+        timestamp = int(time.time())
+        inquiry_id = f"neoComplianceAgent_INQ_{inquiry_counter}_{timestamp}"
+
+        msg = EmailMessage()
+        msg["Subject"] = f"[{inquiry_id}] {subject}"
+        msg["From"] = os.getenv("SMTP_USERNAME")
+        msg["To"] = os.getenv("SMTP_USERNAME")
+        msg["Reply-To"] = user_email
+        msg.set_content(
+            f"Inquiry ID: {inquiry_id}\n\nFrom: {user_email}\n\nMessage:\n{inquiry_body}"
+        )
+
+        with smtplib.SMTP(os.getenv("SMTP_SERVER"), int(os.getenv("SMTP_PORT"))) as smtp:
+            smtp.starttls()
+            smtp.login(os.getenv("SMTP_USERNAME"), os.getenv("SMTP_PASSWORD"))
+            smtp.send_message(msg)
+
+        return {
+            "message": "Inquiry sent successfully. Our team will respond shortly.",
+            "inquiry_id": inquiry_id
+        }
+
+    except Exception as e:
+        logging.error(f"Failed to send inquiry email: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to send inquiry email: {str(e)}")
+
 if __name__ == "__main__":
     import uvicorn
 

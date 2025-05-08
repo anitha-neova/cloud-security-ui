@@ -18,6 +18,7 @@ import LogoutPage from "./pages/LogoutPage";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { ProgressProvider } from "@/context/ProgressContext";
+import AdminContactPage from "./pages/AdminContactPage";
 
 const queryClient = new QueryClient();
 
@@ -42,7 +43,7 @@ const App = () => (
               {/* Public Routes */}
               <Route path="/" element={<LoginPage />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/contact_admin" element={<AdminContactPage />} />
               <Route path="/logout" element={<LogoutPage />} />
               <Route path="/logout-confirm" element={<LogoutConfirmDialog />} />
 
