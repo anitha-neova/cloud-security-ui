@@ -13,19 +13,21 @@ from jose import JWTError, jwt
 from pydantic import BaseModel, EmailStr
 from pymongo import MongoClient
 from passlib.context import CryptContext
-
 from onboarding_cloud import router as onboard_cloud_router  # Import your onboarding router
 from compliance import create_terraform_resource, delete_reports, handle_compliance  # Import your compliance functions
 
-
+# Load environment variables
+load_dotenv()
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "supersecretjwtkey")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
+MONGO_URI = os.getenv("MONGO_URI")
+client = MongoClient(MONGO_URI)
+db = client["Neova"]
+users_collection = db['users']
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
-# Load environment variables
-load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -38,7 +40,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -75,12 +77,6 @@ def verify_token(token: str):
         return email
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
-
-MONGO_URI = os.getenv("MONGO_URI")
-client = MongoClient(MONGO_URI)
-db = client["Neova"]
-users_collection = db['users']
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class SignupRequest(BaseModel):
     email: str
@@ -124,7 +120,7 @@ async def login(login_request: LoginRequest):
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/create_resource")
-async def create_resource(request: ResourceProvisionRequest, current_user: dict = Depends(get_current_user)):
+async def create_resource(request: ResourceProvisionRequest):
     try:
         await delete_reports()
         prompt = request.prompt
@@ -136,7 +132,7 @@ async def create_resource(request: ResourceProvisionRequest, current_user: dict 
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/run_compliance_scan")
-async def run_compliance_scan(request: ComplianceRequest, current_user: dict = Depends(get_current_user)):
+async def run_compliance_scan(request: ComplianceRequest):
     try:
         await delete_reports()
         prompt = request.prompt
@@ -151,7 +147,7 @@ async def run_compliance_scan(request: ComplianceRequest, current_user: dict = D
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/download_compliance_report/")
-async def download_compliance_report(current_user: dict = Depends(get_current_user)):
+async def download_compliance_report():
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     pdf_path = os.path.join(BASE_DIR, "cis_compliance_report.pdf")
     if not os.path.exists(pdf_path):
@@ -163,7 +159,7 @@ async def download_compliance_report(current_user: dict = Depends(get_current_us
     )
 
 @app.get("/download_compliance_xlsx/")
-async def download_compliance_xlsx(current_user: dict = Depends(get_current_user)):
+async def download_compliance_xlsx():
     xlsx_path = "Compliance_Overview.xlsx"
     if not os.path.exists(xlsx_path):
         raise HTTPException(status_code=404, detail="Compliance overview XLSX not found.")
@@ -174,7 +170,7 @@ async def download_compliance_xlsx(current_user: dict = Depends(get_current_user
     )
 
 @app.post("/email_compliance_report")
-async def email_compliance_report(request: EmailRequest, current_user: dict = Depends(get_current_user)):
+async def email_compliance_report(request: EmailRequest):
     recipient_emails = [email.strip() for email in request.recipient_email.split(",")]
     pdf_path = "cis_compliance_report.pdf"
     if not os.path.exists(pdf_path):
@@ -184,7 +180,7 @@ async def email_compliance_report(request: EmailRequest, current_user: dict = De
         msg["Subject"] = "neoComplianceAgent Report"
         msg["From"] = os.getenv("SENDER_EMAIL")
         msg["To"] = ", ".join(recipient_emails)
-    
+
         msg.set_content("Please find attached AI Analyzed neoComplianceAgent Report.")
 
         with open(pdf_path, "rb") as f:
@@ -200,9 +196,9 @@ async def email_compliance_report(request: EmailRequest, current_user: dict = De
 
 @app.post("/support_email")
 async def support_email(
-    user_email: str = Form(...),
-    subject: str = Form(...),
-    message_body: str = Form(...)
+        user_email: str = Form(...),
+        subject: str = Form(...),
+        message_body: str = Form(...)
 ):
     global ticket_counter
     try:
