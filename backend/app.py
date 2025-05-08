@@ -13,19 +13,16 @@ from jose import JWTError, jwt
 from pydantic import BaseModel, EmailStr
 from pymongo import MongoClient
 from passlib.context import CryptContext
-
 from onboarding_cloud import router as onboard_cloud_router  # Import your onboarding router
 from compliance import create_terraform_resource, delete_reports, handle_compliance  # Import your compliance functions
 
-
+# Load environment variables
+load_dotenv()
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "supersecretjwtkey")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
-# Load environment variables
-load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI()
