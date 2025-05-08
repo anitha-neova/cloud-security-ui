@@ -75,7 +75,7 @@ const SupportPage = () => {
               Raise Query With Support Team
             </CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400">
-              Submit a support ticket, and our team will get back to you soon.
+              Submit a query, and our team will get back to you soon.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
@@ -124,12 +124,16 @@ const SupportPage = () => {
               {status === "success" && (
                   <div className="bg-blue-50 dark:bg-gray-800 rounded-lg p-4 text-blue-600 dark:text-blue-400 text-sm space-y-1">
                     <p>
-                      Email successfully sent to the support team. Your ticket ID is <strong>{ticketId}</strong>. Please save this ID for future reference.
+                      Your query has been successfully submitted to our support team. Your ticket ID is <strong>{ticketId}</strong>. Please retain this ID for any future correspondence.
                     </p>
                     <p>
-                      Our team will get back to you soon.
+                      Our team will review your request and get back to you shortly.
+                    </p>
+                    <p>
+                      If you do not receive a response within a reasonable timeframe, feel free to contact us directly at <a href="mailto:techsupport@neovasolutions.in" className="underline">techsupport@neovasolutions.in</a>.
                     </p>
                   </div>
+
               )}
               {status === "error" && (
                   <div className="bg-blue-50 dark:bg-gray-800 rounded-lg p-4 text-red-600 dark:text-red-400 text-sm">

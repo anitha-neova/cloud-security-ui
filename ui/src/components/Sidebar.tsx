@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Home, FileText, LifeBuoy, LogOut, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Home, FileText, LifeBuoy, LogOut, Key, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProgress } from "@/context/ProgressContext";
 import {
@@ -28,23 +28,26 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("user_role");
     setCloudConnected(false);
     setResourceCreated(false);
     setComplianceChecked(false);
     setTerraformCode("");
     setStep(0);
-    navigate("/login", { replace: true });
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
     });
     setIsDialogOpen(false);
+    navigate("/logout"); // Navigate to logout page
   };
 
   const navigation = [
     { name: "Home", href: "/dashboard", icon: Home },
     { name: "Report", href: "/reports", icon: FileText },
     { name: "Support", href: "/support", icon: LifeBuoy },
+    { name: "Reset Password", href: "/reset-password", icon: Key },
   ];
 
   return (
@@ -118,8 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
                   </DialogClose>
                   <Button
                       onClick={handleLogout}
-                      className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
-                  >
+                      className="bg-red-600 text-white hover:bg-red-700"                  >
                     Yes, Logout
                   </Button>
                 </DialogFooter>

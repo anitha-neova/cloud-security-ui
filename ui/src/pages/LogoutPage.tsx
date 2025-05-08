@@ -1,53 +1,34 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { LogOut } from "lucide-react";
 
-const LogoutPage: React.FC = () => {
+const LogoutPage = () => {
     const navigate = useNavigate();
-    const { toast } = useToast();
-    const [countdown, setCountdown] = useState(5);
 
     useEffect(() => {
-        toast({
-            title: "Logged out",
-            description: "You have been successfully logged out.",
-        });
+        const timer = setTimeout(() => {
+            navigate("/login", { replace: true });
+        }, 2000); // Redirect after 2 seconds
 
-        // Countdown timer logic
-        const timer = setInterval(() => {
-            setCountdown((prev) => {
-                if (prev <= 1) {
-                    clearInterval(timer);
-                    navigate("/login", { replace: true }); // Redirect to login page
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(timer); // Clean up on unmount
-    }, [navigate, toast]);
-
-    const handleImmediateRedirect = () => {
-        navigate("/login", { replace: true });
-    };
+        return () => clearTimeout(timer); // Cleanup timer on unmount
+    }, [navigate]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-blue-50 dark:bg-gray-800 p-6">
-            <div className="text-center">
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                    Redirecting to login page in {countdown} seconds.
-                </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                    <a
-                        href="#"
-                        onClick={handleImmediateRedirect}
-                        className="text-blue-500 dark:text-blue-400 hover:underline"
-                    >
-                        Click here
-                    </a>{" "}
-                    if you want to go to the login page now.
+        <div className="min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 flex items-center justify-center px-4">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md text-center">
+                <div className="flex flex-col items-center mb-6">
+                    <LogOut className="w-12 h-12 text-blue-500 dark:text-blue-400 mb-4" />
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Logged Out</h2>
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    You have been successfully logged out. Redirecting to login...
                 </p>
+                <a
+                    href="/login"
+                    className="text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+                >
+                    Go to Login
+                </a>
             </div>
         </div>
     );

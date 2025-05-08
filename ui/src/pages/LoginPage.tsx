@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useToast } from "@/components/ui/use-toast";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
@@ -22,16 +23,26 @@ const LoginPage = () => {
       });
 
       if (response.status === 200) {
-        localStorage.setItem("access_token", response.data.access_token);
-        localStorage.setItem("user_id", response.data.user_id);
+        const { access_token, user_id, role } = response.data;
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("user_id", user_id);
+        localStorage.setItem("user_role", role);
         navigate("/dashboard");
+        toast({
+          title: "Success",
+          description: "Logged in successfully.",
+        });
       }
     } catch (error) {
-      console.error("Login failed:", error);
-      setError(
-          error.response?.data?.message ||
-          "Invalid credentials. Please try again."
-      );
+      console.error("Login error:", error.response || error);
+      const errorMessage =
+          error.response?.data?.detail || "Login failed. Please try again.";
+      setError(errorMessage);
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -59,16 +70,16 @@ const LoginPage = () => {
                 {error}
               </div>
           )}
-          <form className="space-y-7" onSubmit={handleLogin}>
+          <form className="space-y-5" onSubmit={handleLogin}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Email
               </label>
               <input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
-                  className="w-full px-5 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 text-base"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500 text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -76,70 +87,44 @@ const LoginPage = () => {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Password
               </label>
-              <div className="relative">
-                <input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    className="w-full px-5 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 text-base"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    disabled={isLoading}
-                />
-                <span
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                >
-                {showPassword ? "🙈" : "👁️"}
-              </span>
-              </div>
+              <input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500 text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={isLoading}
+              />
             </div>
             <button
                 type="submit"
-                className={`w-full bg-indigo-600 text-white font-semibold py-3 text-lg rounded-md shadow-lg transition duration-300 ${
+                className={`w-full bg-indigo-600 text-white font-semibold py-2 text-base rounded-md shadow-lg transition duration-300 ${
                     isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-indigo-700"
                 }`}
                 disabled={isLoading}
             >
-              {isLoading ? (
-                  <span className="flex items-center justify-center">
-                <svg
-                    className="animate-spin h-5 w-5 mr-2 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                >
-                  <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                  ></circle>
-                  <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                  ></path>
-                </svg>
-                Logging in...
-              </span>
-              ) : (
-                  "Login"
-              )}
+              {isLoading ? "Logging in..." : "Login"}
             </button>
-            <p className="text-center text-sm">
-              Don’t have an account?{" "}
-              <a href="/signup" className="text-indigo-600 font-semibold underline hover:text-indigo-800">
-                Sign up
-              </a>
-            </p>
           </form>
+          <div className="mt-4 text-center space-y-2">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Don’t have an account?{" "}
+              <Link to="/signup" className="text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-800 dark:hover:text-indigo-300">
+                Sign up
+              </Link>
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Forgot Password?{" "}
+              <Link to="/reset-password" className="text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-800 dark:hover:text-indigo-300">
+                Click Here to reset your password
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
   );
