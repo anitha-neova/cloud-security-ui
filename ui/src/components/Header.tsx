@@ -41,15 +41,14 @@ const Header = ({ className }: HeaderProps) => {
                 </div>
 
                 {/* Centered Title */}
-                <div className="flex flex-col justify-center items-center">
-                    <h1 className="font-Roboto font-extrabold text-4xl text-gray-900 dark:text-gray-100 leading-tight">
+                <div className="flex flex-col justify-center items-center py-1 px-4">
+                    <h1 className="font-Roboto font-extrabold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-teal-400 dark:from-blue-400 dark:via-cyan-400 dark:to-green-300 leading-snug text-center">
                         neoComplianceAgent
                     </h1>
-                    <p className="text-lg text-gray-600 dark:text-gray-400 mt-3 max-w-xl text-center">
-                        An AI-Powered Cloud Compliance Solution
+                    <p className="mt-2 text-sm text-gray-700 dark:text-gray-300 text-center max-w-xl">
+                        An <span className="font-semibold text-blue-600 dark:text-blue-400">AI-Powered</span> Cloud Compliance Solution designed to automate, secure, and simplify cloud governance.
                     </p>
                 </div>
-
 
                 {/* Right Side: Header Buttons */}
                 <div className="flex items-center space-x-2">
