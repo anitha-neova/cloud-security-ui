@@ -10,10 +10,11 @@ const SignupPage = () => {
               className="absolute top-4 left-4 w-24 h-auto"
           />
           <div className="flex flex-col items-center mt-12 mb-6">
-            <img src="/welcome_neocompliance.jpg" alt="neoCompliance Welcome" className="w-32 mb-4" />
-            <h2 className="text-2xl font-bold text-slate-800 mb-4">User Registration</h2>
+            <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-teal-400 dark:from-blue-400 dark:via-cyan-400 dark:to-green-300 text-center leading-snug">
+              neoComplianceAgent
+            </h1>
             <p className="text-slate-700 text-sm">
-              Only administrators can create new user accounts. Please contact your administrator to get started.
+              Only administrator can create new user accounts. Please contact your administrator to get started.
             </p>
           </div>
           <p className="text-sm">
