@@ -125,29 +125,42 @@ export const runComplianceScan = async (scanData: any) => {
 export const downloadComplianceReport = async () => {
   try {
     console.log("Downloading compliance report");
-    
+
     const response = await fetch(`${API_URL}/download_compliance_report/`, {
       method: "GET",
-      // Prevent redirect following
-      redirect: "manual"
+      redirect: "manual",
     });
-    
+
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
     }
-    
-    // Return the blob for frontend to handle download
-    return await response.blob();
+
+    const blob = await response.blob();
+
+    // Extract filename from the Content-Disposition header
+    const contentDisposition = response.headers.get("Content-Disposition");
+    let filename = "compliance_report.pdf"; // fallback
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename="?([^"]+)"?/i);
+      if (match && match[1]) {
+        filename = match[1].trim();
+      }
+    }
+
+    // Return both blob and filename
+    return { blob, filename };
   } catch (error) {
     console.error("Report download error:", error);
     toast({
       title: "Report Download Failed",
-      description: error instanceof Error ? error.message : "Unknown error occurred",
+      description:
+        error instanceof Error ? error.message : "Unknown error occurred",
       variant: "destructive",
     });
     throw error;
   }
 };
+
 
 export const emailComplianceReport = async (emailData: { recipient_email: string }) => {
   try {

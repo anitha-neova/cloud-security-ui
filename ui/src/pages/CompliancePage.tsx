@@ -126,16 +126,17 @@ const CompliancePage = () => {
   const handleDownloadReport = async () => {
     try {
       setIsDownloading(true);
-      const blob = await downloadComplianceReport();
+      const { blob, filename } = await downloadComplianceReport();
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "cis_compliance_report.pdf";
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
+
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-
       toast({
         title: "Download Started",
         description: "The compliance report is being downloaded.",

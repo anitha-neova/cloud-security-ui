@@ -17,6 +17,7 @@ from s3_utils import S3Utils
 
 from onboarding_cloud import router as onboard_cloud_router  # Import your onboarding router
 from compliance import create_terraform_resource, delete_reports, handle_compliance  # Import your compliance functions
+import glob
 
 # Load environment variables
 load_dotenv()
@@ -49,6 +50,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Content-Disposition"],
 )
 
 logging.basicConfig(
@@ -166,31 +168,51 @@ async def run_compliance_scan(request: ComplianceRequest):
 
 @app.get("/download_compliance_report/")
 async def download_compliance_report():
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    pdf_path = os.path.join(BASE_DIR, "cis_compliance_report.pdf")
+    # Find the matching report PDF
+    matching_files = glob.glob("./neoComplianceAgent_compliance_report_*.pdf")
+    if not matching_files:
+        raise HTTPException(status_code=404, detail="Compliance report PDF not found.")
+
+    # Pick the most recent one
+    pdf_path = max(matching_files, key=os.path.getmtime)
+    pdf_filename = os.path.basename(pdf_path)
     if not os.path.exists(pdf_path):
         raise HTTPException(status_code=404, detail="Compliance report PDF not found.")
     return FileResponse(
-        path=pdf_path,
-        filename="cis_compliance_report.pdf",
-        media_type="application/pdf"
+    path=pdf_path,
+    filename=pdf_filename,
+    media_type="application/pdf",
+    headers={"Content-Disposition": f'attachment; filename="{pdf_filename}"'}
     )
 
 @app.get("/download_compliance_xlsx/")
 async def download_compliance_xlsx():
-    xlsx_path = "Compliance_Overview.xlsx"
+    matching_files = glob.glob("./neoComplianceAgent_compliance_report_*.xlsx")
+    if not matching_files:
+        raise HTTPException(status_code=404, detail="Compliance report PDF not found.")
+
+    # Pick the most recent one
+    xlsx_path = max(matching_files, key=os.path.getmtime)
+    xlsx_filename = os.path.basename(xlsx_path)
     if not os.path.exists(xlsx_path):
         raise HTTPException(status_code=404, detail="Compliance overview XLSX not found.")
     return FileResponse(
         path=xlsx_path,
-        filename="Compliance_Overview.xlsx",
+        filename=xlsx_filename,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
 @app.post("/email_compliance_report")
 async def email_compliance_report(request: EmailRequest):
     recipient_emails = [email.strip() for email in request.recipient_email.split(",")]
-    pdf_path = "cis_compliance_report.pdf"
+    # Find the matching report PDF
+    matching_files = glob.glob("./neoComplianceAgent_compliance_report_*.pdf")
+    if not matching_files:
+        raise HTTPException(status_code=404, detail="Compliance report PDF not found.")
+
+    # Pick the most recent one
+    pdf_path = max(matching_files, key=os.path.getmtime)
+    
     if not os.path.exists(pdf_path):
         raise HTTPException(status_code=404, detail="Compliance report PDF not found.")
     try:
@@ -272,3 +294,4 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
+ 

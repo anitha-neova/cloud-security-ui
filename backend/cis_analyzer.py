@@ -4,7 +4,7 @@ import logging
 import os
 import re
 from typing import Dict, List, Tuple
-
+import time
 import pandas as pd
 from openai import OpenAI
 from openpyxl import Workbook
@@ -14,6 +14,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image, Spacer
+import glob
 
 class CISComplianceAnalyzer:
     def __init__(self, openai_key: str):
@@ -255,8 +256,10 @@ class CISComplianceAnalyzer:
                 else:
                     cell.fill = PatternFill(start_color="FFFFCC", fill_type="solid")
 
-        xlsx_path = "cis_compliance_report.xlsx"
-        pdf_path = "cis_compliance_report.pdf"
+        
+        timestamp = int(time.time())  # current epoch timestamp in seconds
+        xlsx_path = f"neoComplianceAgent_compliance_report_{timestamp}.xlsx"
+        pdf_path = f"neoComplianceAgent_compliance_report_{timestamp}.pdf"
         wb.save(xlsx_path)
 
         # Now call the fixed static method
@@ -316,13 +319,14 @@ class CISComplianceAnalyzer:
         xlsx_file = self.generate_xlsx_report(actual, expected, titles, resources)
         return "✅ Compliance analysis completed successfully.", xlsx_file
 
-    def cleanup_report_files(self, extensions=("pdf", "xlsx")):
-        """Cleans up multiple report files based on given extensions."""
+    def cleanup_report_files(self):
+        """Cleans up report files with specific extensions."""
+        extensions = ["xlsx", "pdf"]
         for ext in extensions:
-            filename = f"cis_compliance_report.{ext}"
-            if os.path.exists(filename):
+            pattern = f"./neoComplianceAgent_compliance_report_*.{ext}"
+            for report_file in glob.glob(pattern):
                 try:
-                    os.remove(filename)
-                    logging.info(f"🗑️ Deleted report file: {filename}")
+                    os.remove(report_file)
+                    logging.info(f"🗑️ Deleted report file: {report_file}")
                 except Exception as e:
-                    logging.error(f"Failed to delete {filename}: {e}")
+                    logging.error(f"❌ Failed to delete {report_file}: {e}")
