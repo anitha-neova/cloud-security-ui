@@ -19,6 +19,7 @@ import ResetPassword from "./pages/ResetPassword";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { ProgressProvider } from "@/context/ProgressContext";
+import AdminContactPage from "@/pages/AdminContactPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
                         <Route path="/signup" element={<SignupPage />} />
                         <Route path="/logout" element={<LogoutPage />} />
                         <Route path="/reset-password" element={<ResetPassword />} />
+                        <Route path="/contact_admin" element={<AdminContactPage />} />
 
                         {/* Protected Routes */}
                         <Route element={<ProtectedRoute />}>

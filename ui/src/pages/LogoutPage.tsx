@@ -10,7 +10,7 @@ const LogoutPage = () => {
             navigate("/login", { replace: true });
         }, 2000); // Redirect after 2 seconds
 
-        return () => clearTimeout(timer); // Cleanup timer on unmount
+        return () => clearTimeout(timer);
     }, [navigate]);
 
     return (

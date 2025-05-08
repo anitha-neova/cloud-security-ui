@@ -22,7 +22,7 @@ const ResourceCreationPage = () => {
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [terraformCode, setTerraformCode] = useState("");
+  const [, setTerraformCode] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
   const [selectedResource, setSelectedResource] = useState<string | undefined>();

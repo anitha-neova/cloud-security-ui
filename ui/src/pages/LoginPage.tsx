@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
@@ -122,6 +122,12 @@ const LoginPage = () => {
               Forgot Password?{" "}
               <Link to="/reset-password" className="text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-800 dark:hover:text-indigo-300">
                 Click Here to reset your password
+              </Link>
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Interested in using our service?{" "}
+              <Link to="/contact_admin" className="text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-800 dark:hover:text-indigo-300">
+                Contact Us
               </Link>
             </p>
           </div>

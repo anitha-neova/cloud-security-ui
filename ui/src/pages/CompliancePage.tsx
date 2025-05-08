@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Download } from "lucide-react";
+import { Mail } from "lucide-react";
 import ComplianceReport from "@/components/ComplianceReport";
 import {
   runComplianceScan,

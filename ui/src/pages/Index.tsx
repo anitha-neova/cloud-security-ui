@@ -30,7 +30,6 @@ const Index = () => {
     terraformCode,
     cloudConnected,
     resourceCreated,
-    complianceChecked,
     setCloudConnected,
     setResourceCreated,
     setTerraformCode,

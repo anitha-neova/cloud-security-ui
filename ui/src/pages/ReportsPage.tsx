@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -116,7 +115,7 @@ const ReportsPage = () => {
                 )}
             </div>
 
-            {/* Modal for viewing report */}
+            {/* Modal for a viewing report */}
             {selectedReport && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
                     <div className="bg-white dark:bg-gray-900 rounded-xl p-4 w-full max-w-4xl relative shadow-lg">
