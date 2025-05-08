@@ -33,7 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
     setComplianceChecked(false);
     setTerraformCode("");
     setStep(0);
-    navigate("/logout", { replace: true });
+    navigate("/login", { replace: true });
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
   };
 
   const navigation = [
-    { name: "Home", href: "/", icon: Home },
+    { name: "Home", href: "/dashboard", icon: Home },
     { name: "Report", href: "/reports", icon: FileText },
     { name: "Support", href: "/support", icon: LifeBuoy },
   ];

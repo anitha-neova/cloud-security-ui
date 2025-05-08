@@ -112,7 +112,7 @@ const ResourceCreationPage = () => {
         description: "The cloud resource has been successfully created.",
       });
 
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       toast({
         title: "Error",

@@ -43,7 +43,7 @@ const CloudConnectionPage = () => {
       });
 
       // Redirect to homepage after successful connection
-      navigate("/");  // Navigate to the homepage instead of the resource creation page
+      navigate("/dashboard");
 
     } catch (error) {
       console.error("Connection error:", error);

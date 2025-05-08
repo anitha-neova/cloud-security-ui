@@ -59,7 +59,7 @@ const Header = ({ className }: HeaderProps) => {
                                 variant="outline"
                                 size="icon"
                                 className="border-blue-500 text-blue-500 hover:bg-blue-100 dark:hover:bg-gray-700"
-                                onClick={() => navigate("/")}
+                                onClick={() => navigate("/dashboard")}
                             >
                                 <Home className="h-6 w-6" />
                             </Button>

@@ -116,7 +116,7 @@ const SupportPage = () => {
                     variant="outline"
                     size="sm"
                     className="flex-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 hover:scale-105"
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/dashboard")}
                 >
                   Go to Homepage
                 </Button>
