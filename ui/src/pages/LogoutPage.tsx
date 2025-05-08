@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 
 const LogoutPage: React.FC = () => {
@@ -13,18 +13,19 @@ const LogoutPage: React.FC = () => {
             description: "You have been successfully logged out.",
         });
 
+        // Countdown timer logic
         const timer = setInterval(() => {
             setCountdown((prev) => {
                 if (prev <= 1) {
                     clearInterval(timer);
-                    navigate("/login", { replace: true });
+                    navigate("/login", { replace: true }); // Redirect to login page
                     return 0;
                 }
                 return prev - 1;
             });
         }, 1000);
 
-        return () => clearInterval(timer);
+        return () => clearInterval(timer); // Clean up on unmount
     }, [navigate, toast]);
 
     const handleImmediateRedirect = () => {
@@ -38,13 +39,13 @@ const LogoutPage: React.FC = () => {
                     Redirecting to login page in {countdown} seconds.
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                    <Link
-                        to="/login"
+                    <a
+                        href="#"
                         onClick={handleImmediateRedirect}
                         className="text-blue-500 dark:text-blue-400 hover:underline"
                     >
                         Click here
-                    </Link>{" "}
+                    </a>{" "}
                     if you want to go to the login page now.
                 </p>
             </div>

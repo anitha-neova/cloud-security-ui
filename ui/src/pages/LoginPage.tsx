@@ -40,16 +40,17 @@ const LoginPage = () => {
       <div className="min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-2xl p-8 sm:p-12 w-full max-w-xl">
           <div className="flex flex-col items-center mb-8">
-            <img src="/neova_solutions_logo.png" alt="Neova Solutions Logo" className="w-21 h-21 mb-4" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">neoComplianceAgent Login</h1>
-            <p className="text-slate-500 text-sm sm:text-base text-center">Cloud Security & Compliance Portal</p>
+            <img src="/neova_solutions_logo.png" alt="Neova Solutions Logo" className="w-18 h-18 mb-4" />
+            <h1 className="text-2xl sm:text-2xl font-bold text-slate-800">Welcome To neoComplianceAgent</h1>
+            <p className="text-slate-600 font-bold text-sm sm:text-base text-center">An AI-Powered Cloud Compliance Solution</p>
           </div>
+          <p className="text-slate-700 text-xs sm:text-sm text-center mt-4">Enter your credentials to begin using neoComplianceAgent</p> {/* Adjusted mt-6 for more space */}
           {error && (
               <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded" role="alert">
                 {error}
               </div>
           )}
-          <form className="space-y-6" onSubmit={handleLogin}>
+          <form className="space-y-7" onSubmit={handleLogin}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email

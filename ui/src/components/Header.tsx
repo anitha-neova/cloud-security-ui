@@ -42,13 +42,14 @@ const Header = ({ className }: HeaderProps) => {
 
                 {/* Centered Title */}
                 <div className="flex flex-col justify-center items-center">
-                    <h1 className="font-bold text-3xl text-blue-800 dark:text-blue-300">
+                    <h1 className="font-Roboto font-extrabold text-4xl text-gray-900 dark:text-gray-100 leading-tight">
                         neoComplianceAgent
                     </h1>
-                    <p className="text-l text-blue-600 dark:text-blue-400 mt-2">
-                        An AI-Powered Cloud Compliance Validation Solution
+                    <p className="text-lg text-gray-600 dark:text-gray-400 mt-3 max-w-xl text-center">
+                        An AI-Powered Cloud Compliance Solution
                     </p>
                 </div>
+
 
                 {/* Right Side: Header Buttons */}
                 <div className="flex items-center space-x-2">
