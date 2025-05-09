@@ -210,9 +210,9 @@ const CreateUserPage = () => {
                 />
                 <label
                   htmlFor="adminCheckbox"
-                  className="text-sm text-slate-700"
+                  className="text-sm text-slate-700 font-extrabold"
                 >
-                  Create New Admin
+                  Create User As Admin
                 </label>
               </div>
               <button
