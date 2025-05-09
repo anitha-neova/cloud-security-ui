@@ -253,19 +253,26 @@ const CompliancePage = () => {
             </Card>
 
             {isProcessing && (
-                <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 col-span-full hover:shadow-lg transition-shadow duration-200">
-                  <CardHeader className="p-4">
-                    <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+                <Card
+                    className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700">
+                  <CardHeader className="p-6">
+                    <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
                       Processing
                     </CardTitle>
                     <CardDescription className="text-gray-600 dark:text-gray-400">
                       {currentStep}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-4">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Progress: {progress}%
+                        </span>
+                    </div>
                     <Progress
                         value={progress}
-                        className="h-2 bg-blue-100 dark:bg-gray-700 rounded-lg"
+                        className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full"
+                        indicatorClassName="bg-blue-500"
                     />
                   </CardContent>
                 </Card>
