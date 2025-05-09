@@ -240,6 +240,9 @@ const CompliancePage = () => {
                     onChange={(e) => setUserPrompt(e.target.value)}
                     disabled={isProcessing}
                 />
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 italic">
+                  ⚠️ Compliance report validation is powered by AI and may occasionally produce inaccurate or incomplete comparisons. Please manually verify critical findings before taking action.
+                </p>
               </CardContent>
               <CardFooter className="p-4 flex justify-end">
                 <Button

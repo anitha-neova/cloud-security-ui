@@ -158,12 +158,16 @@ const ResourceCreationPage = () => {
                                 </SelectContent>
                             </Select>
                             <Textarea
-                                placeholder="Please specify resource configuration like -  bucket public access diabled and bucket name as test-123"
+                                placeholder="Please specify resource configuration..."
                                 className="min-h-[100px] border-gray-200 rounded-lg focus:ring-blue-500 dark:border-gray-700"
                                 value={userPrompt}
                                 onChange={(e) => setUserPrompt(e.target.value)}
                                 disabled={isProcessing}
                             />
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 italic">
+                                ⚠️ This infrastructure code is AI-generated and may not fully adhere to best practices or official specifications. Please review and regenerate if it doesn't meet your requirements.
+                            </p>
+
                         </CardContent>
                         <CardFooter className="p-6 flex justify-end">
                             <Button
