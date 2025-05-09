@@ -80,11 +80,11 @@ const LoginPage = () => {
             {error}
           </div>
         )}
-        <form className="space-y-5" onSubmit={handleLogin}>
+        <form className="space-y-5 " onSubmit={handleLogin}>
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              className="block text-sm text-gray-700 dark:text-gray-300 mb-1 font-extrabold"
             >
               Email
             </label>
@@ -102,7 +102,7 @@ const LoginPage = () => {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              className="block text-sm font-extrabold text-gray-700 dark:text-gray-300 mb-1"
             >
               Password
             </label>
