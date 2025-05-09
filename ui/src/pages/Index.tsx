@@ -86,17 +86,6 @@ const Index = () => {
   return (
       <Layout promptHistory={[]}>
         <div className="max-w-7xl mx-auto p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h1>
-            {userRole === "admin" && (
-                <Button
-                    onClick={handleNavigateToUserManagement}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105"
-                >
-                  User Management
-                </Button>
-            )}
-          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
             {/* Cloud Connect Card */}
             <Card className="bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md border-blue-200 dark:border-gray-700 min-h-[200px] hover:shadow-lg transition-shadow duration-200">

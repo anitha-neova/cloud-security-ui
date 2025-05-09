@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link,useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -13,6 +13,12 @@ const CreateUserPage = () => {
   const [userRole, setUserRole] = useState("user");
   const navigate = useNavigate();
 
+  const validatePassword = (password) => {
+    const regex =
+        /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return regex.test(password);
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
@@ -24,13 +30,19 @@ const CreateUserPage = () => {
       return;
     }
 
-    try {
-      console.log(userRole);
+    if (!validatePassword(password)) {
+      setError(
+          "Password must be at least 8 characters, include one uppercase letter, one number, and one special character (!@#$%^&*)."
+      );
+      setIsLoading(false);
+      return;
+    }
 
+    try {
       const response = await axios.post("http://localhost:8000/create_user", {
         email,
         password,
-        role : userRole
+        role: userRole,
       });
 
       if (response.status === 200 || response.status === 201) {
@@ -39,13 +51,14 @@ const CreateUserPage = () => {
     } catch (error) {
       console.error("Signup failed:", error);
       setError(
-        error.response?.data?.message ||
+          error.response?.data?.message ||
           "Signup failed. User may already exist or input is invalid."
       );
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 flex items-center justify-center px-4 py-8">
@@ -179,6 +192,12 @@ const CreateUserPage = () => {
                   required
                   disabled={isLoading}
                 />
+                <ul className="mt-2 text-sm text-gray-600 dark:text-gray-400 list-disc list-inside">
+                  <li>Minimum 8 characters</li>
+                  <li>At least one uppercase letter</li>
+                  <li>At least one number</li>
+                  <li>At least one special character (!@#$%^&*)</li>
+                </ul>
               </div>
               <div className="flex items-center space-x-3">
                 <input
