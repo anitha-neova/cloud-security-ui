@@ -248,35 +248,44 @@ async def download_compliance_xlsx():
 
 @app.post("/email_compliance_report")
 async def email_compliance_report(request: EmailRequest):
-    recipient_emails = [email.strip() for email in request.recipient_email.split(",")]
-    # Find the matching report PDF
-    matching_files = glob.glob("./neoComplianceAgent_compliance_report_*.pdf")
-    if not matching_files:
-        raise HTTPException(status_code=404, detail="Compliance report PDF not found.")
-
-    # Pick the most recent one
-    pdf_path = max(matching_files, key=os.path.getmtime)
-
-    if not os.path.exists(pdf_path):
-        raise HTTPException(status_code=404, detail="Compliance report PDF not found.")
     try:
+        recipient_emails = [email.strip() for email in request.recipient_email.split(",")]
+        matching_files = glob.glob("./neoComplianceAgent_compliance_report_*.pdf")
+        if not matching_files:
+            logging.error("No compliance report PDF files found for emailing")
+            raise HTTPException(status_code=404, detail="Compliance report PDF not found.")
+
+        pdf_path = max(matching_files, key=os.path.getmtime)
+        pdf_filename = os.path.basename(pdf_path)
+        if not os.path.exists(pdf_path):
+            logging.error(f"Compliance report XLSX not found at {pdf_path}")
+            raise HTTPException(status_code=404, detail="Compliance report XLSX not found.")
+
+        logging.info(f"Sending compliance report XLSX: {pdf_path} to {', '.join(recipient_emails)}")
         msg = EmailMessage()
-        msg["Subject"] = "neoComplianceAgent Report"
+        msg["Subject"] = f"neoComplianceAgent Report – {pdf_filename}"
         msg["From"] = os.getenv("SENDER_EMAIL")
         msg["To"] = ", ".join(recipient_emails)
-
-        msg.set_content("Please find attached AI Analyzed neoComplianceAgent Report.")
+        msg.set_content("Please find attached the neoComplianceAgent Compliance Report (Excel).")
 
         with open(pdf_path, "rb") as f:
-            msg.add_attachment(f.read(), maintype="application", subtype="pdf", filename=os.path.basename(pdf_path))
+            msg.add_attachment(
+                f.read(),
+                maintype="application",
+                subtype="vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                filename=pdf_filename
+            )
+
         with smtplib.SMTP(os.getenv("SMTP_SERVER"), int(os.getenv("SMTP_PORT"))) as server:
             server.starttls()
             server.login(os.getenv("SMTP_USERNAME"), os.getenv("SMTP_PASSWORD"))
             server.send_message(msg)
+
+        logging.info(f"Email sent to {', '.join(recipient_emails)} successfully")
         return {"message": f"Email sent to {', '.join(recipient_emails)} successfully."}
     except Exception as e:
         logging.error(f"Failed to send email: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to send email.")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/support_email")
 async def support_email(
