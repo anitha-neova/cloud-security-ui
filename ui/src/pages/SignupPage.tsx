@@ -14,8 +14,10 @@ const SignupPage = () => {
             neoComplianceAgent
           </h1>
           <p className="text-slate-700 text-sm">
-            Only administrator can create new user accounts. Please contact your
-            administrator to get started.
+            Only administrators can create new user accounts. Please contact your administrator to get started.
+          </p>
+          <p className="text-slate-700 text-sm">
+            If you are an administrator, please log in using your admin credentials.
           </p>
         </div>
         <p className="text-sm">
