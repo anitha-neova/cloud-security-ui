@@ -148,13 +148,15 @@ async def run_compliance_scan(request: ComplianceRequest):
         if not prompt.strip():
             raise HTTPException(status_code=400, detail="Prompt cannot be empty.")
         result_msg, xlsx_path = await handle_compliance(prompt)
-        s3 = S3Utils()
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        s3_key = f"compliance-reports/{user_id}/cis_compliance_report_{timestamp}.pdf"
-        pdf_path = "cis_compliance_report.pdf"
 
-        if not os.path.exists(pdf_path):
+        matching_files = glob.glob("./neoComplianceAgent_compliance_report_*.pdf")
+        if not matching_files:
             raise HTTPException(status_code=500, detail="Compliance report PDF not found.")
+        pdf_path = max(matching_files, key=os.path.getmtime)
+        pdf_filename = os.path.basename(pdf_path)
+
+        s3 = S3Utils()
+        s3_key = f"compliance-reports/{user_id}/{pdf_filename}"
 
         s3.upload_file(pdf_path, BUCKET_NAME, s3_key)
         return {
