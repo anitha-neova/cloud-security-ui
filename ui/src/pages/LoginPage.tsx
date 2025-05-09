@@ -64,7 +64,7 @@ const LoginPage = () => {
               An <span className="font-semibold text-blue-600 dark:text-blue-400">AI-Powered</span> Cloud Compliance Solution
             </p>
           </div>
-          <p className="text-slate-700 text-xs sm:text-sm text-center mt-4">Enter your credentials to begin using neoComplianceAgent</p> {/* Adjusted mt-6 for more space */}
+          <p className="text-slate-700 text-xs sm:text-sm text-center mt-4">Login to begin using neoComplianceAgent</p> {/* Adjusted mt-6 for more space */}
           {error && (
               <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded" role="alert">
                 {error}
