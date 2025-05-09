@@ -136,7 +136,7 @@ const AdminContactPage = () => {
                                     className="flex-1"
                                     onClick={() => navigate("/dashboard")}
                                 >
-                                    Back to Login
+                                    Back
                                 </Button>
                             </div>
                         </form>

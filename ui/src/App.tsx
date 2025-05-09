@@ -11,13 +11,12 @@ import ResourceCreationPage from "./pages/ResourceCreationPage";
 import SupportPage from "./pages/SupportPage";
 import ReportsPage from "@/pages/ReportsPage.tsx";
 import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
 import LogoutPage from "./pages/LogoutPage";
-import UserManagement from "./pages/UserManagement";
-import ResetPassword from "./pages/ResetPassword";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { ProgressProvider } from "@/context/ProgressContext";
-import AdminContactPage from "@/pages/AdminContactPage.tsx";
+import AdminContactPage from "./pages/AdminContactPage";
+import SignupPage from "@/pages/SignupPage.tsx";
+import ResetPassword from "@/pages/ResetPassword.tsx";
 
 const queryClient = new QueryClient();
 
@@ -42,10 +41,10 @@ const App = () => (
                         {/* Public Routes */}
                         <Route path="/" element={<LoginPage />} />
                         <Route path="/login" element={<LoginPage />} />
-                        <Route path="/signup" element={<SignupPage />} />
-                        <Route path="/logout" element={<LogoutPage />} />
-                        <Route path="/reset-password" element={<ResetPassword />} />
                         <Route path="/contact_admin" element={<AdminContactPage />} />
+                        <Route path="/logout" element={<LogoutPage />} />
+                        <Route path="/signup" element={<SignupPage />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
 
                         {/* Protected Routes */}
                         <Route element={<ProtectedRoute />}>
@@ -55,11 +54,7 @@ const App = () => (
                             <Route path="/resource-creation" element={<ResourceCreationPage />} />
                             <Route path="/support" element={<SupportPage />} />
                             <Route path="/reports" element={<ReportsPage />} />
-                        </Route>
 
-                        {/* Admin-Only Routes */}
-                        <Route element={<ProtectedRoute requiredRole="admin" />}>
-                            <Route path="/user-management" element={<UserManagement />} />
                         </Route>
 
                         {/* Catch-all */}

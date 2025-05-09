@@ -7,7 +7,7 @@ const LogoutPage = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            navigate("/login", { replace: true });
+            navigate("/", { replace: true });
         }, 2000); // Redirect after 2 seconds
 
         return () => clearTimeout(timer);
@@ -24,7 +24,7 @@ const LogoutPage = () => {
                     You have been successfully logged out. Redirecting to login...
                 </p>
                 <a
-                    href="/login"
+                    href="/"
                     className="text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
                 >
                     Go to Login
