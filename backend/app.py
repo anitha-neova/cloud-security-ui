@@ -32,6 +32,7 @@ client = MongoClient(MONGO_URI)
 db = client["neoComplianceAgent"]
 users_collection = db['Users']
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+ticket_counter = 0
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
