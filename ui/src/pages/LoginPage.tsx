@@ -68,7 +68,7 @@ const LoginPage = () => {
             Cloud Compliance Solution
           </p>
         </div>
-        <p className="text-slate-700 text-xs sm:text-sm text-center mt-4">
+        <p className="text-slate-700 text-xs sm:text-sm text-center mt-4 font-extrabold">
           Login to begin using neoComplianceAgent
         </p>{" "}
         {/* Adjusted mt-6 for more space */}
