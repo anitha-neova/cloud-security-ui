@@ -11,9 +11,9 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image, Spacer
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image, Spacer, Preformatted
 import glob
 
 class CISComplianceAnalyzer:
@@ -190,37 +190,131 @@ class CISComplianceAnalyzer:
         header_style = styles["Heading4"]
         body_style = styles["BodyText"]
 
-        # Build table data
-        data = [[Paragraph(str(col), header_style) for col in df.columns]]
-        data += [[Paragraph(str(cell), body_style) for cell in row] for row in df.values]
+        # Style for code blocks
+        code_style = ParagraphStyle(
+            name='CodeBlock',
+            fontName='Courier',
+            fontSize=8,
+            leading=10,
+            backColor=colors.whitesmoke,
+            leftIndent=6,
+            rightIndent=6,
+            spaceBefore=6,
+            spaceAfter=6,
+            borderPadding=4
+        )
 
-        # Define uniform column widths
+        # Build table data with conditional formatting for PASS/FAIL
+        data = [[Paragraph(str(col), header_style) for col in df.columns]]
+        for row in df.values:
+            styled_row = []
+            for i, cell in enumerate(row):
+                text = str(cell)
+                if i in [3, 4]:  # Columns with results
+                    if text.upper() == "PASS":
+                        styled_row.append(Paragraph(f'<font color="green">{text}</font>', body_style))
+                    elif text.upper() == "FAIL":
+                        styled_row.append(Paragraph(f'<font color="red">{text}</font>', body_style))
+                    else:
+                        styled_row.append(Paragraph(text, body_style))
+                else:
+                    styled_row.append(Paragraph(text, body_style))
+            data.append(styled_row)
+
+        # Define column widths
         num_cols = len(df.columns)
         total_width = 7.0 * inch
         col_widths = [total_width / num_cols] * num_cols
-        # Table formatting
+
         table = Table(data, colWidths=col_widths, repeatRows=1)
         table.setStyle(TableStyle([
             ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
             ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
             ('FONTSIZE', (0, 0), (-1, -1), 8),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ]))
 
-        # Logo image
         logo = Image("logos/neova_solutions_logo.jpeg", width=1.5 * inch, height=1.5 * inch)
         logo.hAlign = 'RIGHT'
+        title_table = Table([[Paragraph("CIS Compliance Analysis Report", styles["Title"]), logo]],
+                            colWidths=[4.5 * inch, 2 * inch])
 
-        # PDF generation
+        # Build the final remediation section
+        fail_controls = df[df["Actual Compliance"] == "FAIL"]
+        remediation_elements = [Spacer(1, 20), Paragraph("Misconfigurations and Remediation Steps", styles["Heading2"])]
+
+        for idx, (_, row) in enumerate(fail_controls.iterrows(), start=1):
+            control = row["Control Name"]
+
+            remediation_prompt = (
+                f"You are a cloud security expert. Provide a short, effective remediation for this failed AWS CIS control:\n\n"
+                f"Control: {control}\n\n"
+                "Format:\n"
+                "- Summary (1-2 lines)\n"
+                "- Fix (use plain bullet points, max 3 items)\n"
+                "- Include 1 short CLI/JSON code block ONLY if essential\n"
+                "IMPORTANT: Do not use markdown formatting like **, *, or ```.\n"
+                "Respond in plain text only."
+            )
+
+            try:
+                gpt = OpenAI()
+                response = gpt.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[{"role": "user", "content": remediation_prompt}],
+                    max_tokens=500,
+                    temperature=0.3
+                )
+                remediation = response.choices[0].message.content.strip()
+            except Exception as e:
+                remediation = f"\u26a0\ufe0f Failed to generate remediation: {str(e)}"
+
+            remediation_elements.append(Spacer(1, 12))
+            remediation_elements.append(Paragraph(f"<b>Control {idx}: {control}</b>", styles["Heading3"]))
+            remediation_elements.append(Spacer(1, 6))
+
+            code_buffer = []
+
+            def flush_code_block():
+                if code_buffer:
+                    joined_code = "\n".join(code_buffer)
+                    remediation_elements.append(Preformatted(joined_code, style=code_style))
+                    remediation_elements.append(Spacer(1, 6))
+                    code_buffer.clear()
+
+            for line in remediation.split("\n"):
+                line = line.rstrip()
+                if not line:
+                    flush_code_block()
+                    continue
+
+                if (
+                    line.startswith("    ") or
+                    re.match(r"^[\\[{]", line) or
+                    re.match(r"^(aws|curl|chmod|echo|jq|terraform|gcloud)\\s", line)
+                ):
+                    code_buffer.append(line)
+                    continue
+                else:
+                    flush_code_block()
+
+                if re.match(r"^[A-Z].*:$", line):
+                    remediation_elements.append(Spacer(1, 6))
+                    remediation_elements.append(Paragraph(f"<b>{line}</b>", styles["Heading4"]))
+                elif re.match(r"^\\d+\\.", line):
+                    remediation_elements.append(Paragraph(line, body_style))
+                else:
+                    remediation_elements.append(Paragraph(line, body_style))
+
+            flush_code_block()
+
         pdf = SimpleDocTemplate(pdf_path, pagesize=A4)
-        elements = [
-            Table([[Paragraph("CIS Compliance Analysis Report", styles["Title"]), logo]], colWidths=[4.5 * inch, 2 * inch]),
-            Spacer(1, 12),
-            table
-        ]
+        elements = [title_table, Spacer(1, 12), table] + remediation_elements
         pdf.build(elements, onFirstPage=CISComplianceAnalyzer.add_footer, onLaterPages=CISComplianceAnalyzer.add_footer)
+
 
     @staticmethod
     def generate_xlsx_report(actual: Dict[str, str], expected: Dict[str, str], titles: Dict[str, str],
