@@ -89,6 +89,7 @@ def verify_token(token: str):
 class SignupRequest(BaseModel):
     email: str
     password: str
+    role: str
 
 class LoginRequest(BaseModel):
     email: EmailStr
@@ -120,8 +121,10 @@ async def signup(user: SignupRequest):
     existing_user = users_collection.find_one({"email": user.email})
     if existing_user:
         raise HTTPException(status_code=400, detail="User already exists with this email.")
+    if user.role not in ["admin", "user", "compliance"]:
+        raise HTTPException(status_code=400, detail="Invalid role.")
     hashed_password = pwd_context.hash(user.password)
-    users_collection.insert_one({"email": user.email, "password": hashed_password})
+    users_collection.insert_one({"email": user.email, "password": hashed_password,"role": user.role})
     return {"message": "User created successfully!"}
 
 @app.post("/reset-password")
@@ -159,6 +162,17 @@ async def reset_password(request: ResetPasswordRequest):
     except Exception as e:
         logging.error(f"Error in reset_password: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/admin_login")
+async def login(login_request: LoginRequest):
+    user = users_collection.find_one({"email": login_request.email})
+    if not user or not pwd_context.verify(login_request.password, user['password']):
+        raise HTTPException(status_code=400, detail="Invalid email or password.")
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Access denied. Admins only.")
+    token_data = {"sub": user["email"]}
+    access_token = create_access_token(token_data)
+    return {"access_token": access_token, "token_type": "bearer", "user_id": str(user["_id"]),"role":"admin"}
 
 @app.post("/login")
 async def login(login_request: LoginRequest):

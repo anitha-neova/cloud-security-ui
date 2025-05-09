@@ -17,53 +17,62 @@ import { ProgressProvider } from "@/context/ProgressContext";
 import AdminContactPage from "./pages/AdminContactPage";
 import SignupPage from "@/pages/SignupPage.tsx";
 import ResetPassword from "@/pages/ResetPassword.tsx";
+import UserSignupPage from "./pages/UserSignupPage";
+import AdminLoginPage from "./pages/AdminLoginPage";
+import AdminProtectedRoute from "./components/AdminProtectedRoute";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-    <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-            <ProgressProvider>
-                <Toaster
-                    toastOptions={{
-                        className:
-                            "bg-blue-500 text-white rounded-lg shadow-md border-blue-200 dark:bg-blue-600 dark:border-gray-700 transition-all duration-200",
-                    }}
-                />
-                <Sonner
-                    toastOptions={{
-                        className:
-                            "bg-blue-500 text-white rounded-lg shadow-md border-blue-200 dark:bg-blue-600 dark:border-gray-700 transition-all duration-200",
-                    }}
-                />
-                <BrowserRouter>
-                    <Routes>
-                        {/* Public Routes */}
-                        <Route path="/" element={<LoginPage />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/contact_admin" element={<AdminContactPage />} />
-                        <Route path="/logout" element={<LogoutPage />} />
-                        <Route path="/signup" element={<SignupPage />} />
-                        <Route path="/reset-password" element={<ResetPassword />} />
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <ProgressProvider>
+        <Toaster
+          toastOptions={{
+            className:
+              "bg-blue-500 text-white rounded-lg shadow-md border-blue-200 dark:bg-blue-600 dark:border-gray-700 transition-all duration-200",
+          }}
+        />
+        <Sonner
+          toastOptions={{
+            className:
+              "bg-blue-500 text-white rounded-lg shadow-md border-blue-200 dark:bg-blue-600 dark:border-gray-700 transition-all duration-200",
+          }}
+        />
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/contact_admin" element={<AdminContactPage />} />
+            <Route path="/logout" element={<LogoutPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/admin/login" element={<AdminLoginPage />} />
 
-                        {/* Protected Routes */}
-                        <Route element={<ProtectedRoute />}>
-                            <Route path="/dashboard" element={<Index />} />
-                            <Route path="/cloud-connect" element={<CloudConnectionPage />} />
-                            <Route path="/compliance" element={<CompliancePage />} />
-                            <Route path="/resource-creation" element={<ResourceCreationPage />} />
-                            <Route path="/support" element={<SupportPage />} />
-                            <Route path="/reports" element={<ReportsPage />} />
+            <Route element={<AdminProtectedRoute />}>
+              <Route path="/admin_signup" element={<UserSignupPage />} />
+            </Route>
 
-                        </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<Index />} />
+              <Route path="/cloud-connect" element={<CloudConnectionPage />} />
+              <Route path="/compliance" element={<CompliancePage />} />
+              <Route
+                path="/resource-creation"
+                element={<ResourceCreationPage />}
+              />
+              <Route path="/support" element={<SupportPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+            </Route>
 
-                        {/* Catch-all */}
-                        <Route path="*" element={<NotFound />} />
-                    </Routes>
-                </BrowserRouter>
-            </ProgressProvider>
-        </TooltipProvider>
-    </QueryClientProvider>
+            {/* Catch-all */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </ProgressProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
 );
 
 export default App;
