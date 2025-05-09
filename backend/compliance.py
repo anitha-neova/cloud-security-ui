@@ -100,6 +100,6 @@ async def handle_compliance(user_prompt: str):
 #        if analyzer:
 #            analyzer.cleanup_report_files()
     except Exception as e:
-        raise Exception(f"❌ Failed to cleanup resources: {e}")                         
+        raise Exception(f"❌ Failed to cleanup resources: {e}")
 
     return result_msg, xlsx_path

@@ -14,6 +14,7 @@ from pydantic import BaseModel, EmailStr
 from pymongo import MongoClient
 from passlib.context import CryptContext
 from s3_utils import S3Utils
+
 from onboarding_cloud import router as onboard_cloud_router  # Import your onboarding router
 from compliance import create_terraform_resource, delete_reports, handle_compliance  # Import your compliance functions
 import glob
@@ -61,7 +62,6 @@ logging.basicConfig(
     ]
 )
 
-
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     email = verify_token(token)
     user = users_collection.find_one({"email": email})
@@ -69,13 +69,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="User not found")
     return user
 
-
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
 
 def verify_token(token: str):
     try:
@@ -87,37 +85,29 @@ def verify_token(token: str):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-
 class SignupRequest(BaseModel):
     email: str
     password: str
-
 
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
-
 class ResourceProvisionRequest(BaseModel):
     prompt: str
-
 
 class ComplianceRequest(BaseModel):
     prompt: str
     user_id: str
 
-
 class EmailRequest(BaseModel):
     recipient_email: str
 
-
 app.include_router(onboard_cloud_router, prefix="/onboard_cloud", tags=["Onboarding"])
-
 
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the AI-powered Cloud Compliance Automation API!"}
-
 
 @app.post("/signup")
 async def signup(user: SignupRequest):
@@ -128,7 +118,6 @@ async def signup(user: SignupRequest):
     users_collection.insert_one({"email": user.email, "password": hashed_password})
     return {"message": "User created successfully!"}
 
-
 @app.post("/login")
 async def login(login_request: LoginRequest):
     user = users_collection.find_one({"email": login_request.email})
@@ -137,7 +126,6 @@ async def login(login_request: LoginRequest):
     token_data = {"sub": user["email"]}
     access_token = create_access_token(token_data)
     return {"access_token": access_token, "token_type": "bearer", "user_id": str(user["_id"])}
-
 
 @app.post("/create_resource")
 async def create_resource(request: ResourceProvisionRequest):
@@ -150,7 +138,6 @@ async def create_resource(request: ResourceProvisionRequest):
         return JSONResponse(content={"terraform_code": result})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/run_compliance_scan")
 async def run_compliance_scan(request: ComplianceRequest):
@@ -175,9 +162,9 @@ async def run_compliance_scan(request: ComplianceRequest):
             "report_path": xlsx_path,
             "s3_url": f"s3://{BUCKET_NAME}/{s3_key}"
         }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.get("/download_compliance_report/")
 async def download_compliance_report():
@@ -192,12 +179,11 @@ async def download_compliance_report():
     if not os.path.exists(pdf_path):
         raise HTTPException(status_code=404, detail="Compliance report PDF not found.")
     return FileResponse(
-        path=pdf_path,
-        filename=pdf_filename,
-        media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{pdf_filename}"'}
+    path=pdf_path,
+    filename=pdf_filename,
+    media_type="application/pdf",
+    headers={"Content-Disposition": f'attachment; filename="{pdf_filename}"'}
     )
-
 
 @app.get("/download_compliance_xlsx/")
 async def download_compliance_xlsx():
@@ -215,7 +201,6 @@ async def download_compliance_xlsx():
         filename=xlsx_filename,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-
 
 @app.post("/email_compliance_report")
 async def email_compliance_report(request: EmailRequest):
@@ -248,7 +233,6 @@ async def email_compliance_report(request: EmailRequest):
     except Exception as e:
         logging.error(f"Failed to send email: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to send email.")
-
 
 @app.post("/support_email")
 async def support_email(
@@ -304,6 +288,7 @@ async def list_compliance_reports(user_id: str = Query(..., description="MongoDB
     except Exception as e:
         logging.error(f"❌ Error listing files: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to list compliance reports.")
+
 
 @app.post("/ask_admin")
 async def ask_admin(
