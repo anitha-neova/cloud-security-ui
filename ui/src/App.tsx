@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { Navigate } from "react-router-dom";
 import CloudConnectionPage from "./pages/CloudConnectionPage";
 import CompliancePage from "./pages/CompliancePage";
 import ResourceCreationPage from "./pages/ResourceCreationPage";
@@ -15,13 +16,14 @@ import LogoutPage from "./pages/LogoutPage";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { ProgressProvider } from "@/context/ProgressContext";
 import AdminContactPage from "./pages/AdminContactPage";
-import SignupPage from "@/pages/SignupPage.tsx";
+import SignupPage from "./pages/SignupPage";
 import ResetPassword from "@/pages/ResetPassword.tsx";
-import UserSignupPage from "./pages/UserSignupPage";
-import AdminLoginPage from "./pages/AdminLoginPage";
-import AdminProtectedRoute from "./components/AdminProtectedRoute";
+// import AdminProtectedRoute from "./components/AdminProtectedRoute";
+import CreateUserPage from "./pages/CreateUserPage";
+import { AdminProtectedRoute } from "./components/AdminProtectedRoute";
 
 const queryClient = new QueryClient();
+const role = localStorage.getItem("user_role");
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -48,13 +50,17 @@ const App = () => (
             <Route path="/logout" element={<LogoutPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/admin/login" element={<AdminLoginPage />} />
-
-            <Route element={<AdminProtectedRoute />}>
-              <Route path="/admin_signup" element={<UserSignupPage />} />
-            </Route>
 
             <Route element={<ProtectedRoute />}>
+              <Route
+                path="/create-user"
+                element={
+                  <AdminProtectedRoute allowedRoles={["admin"]}>
+                    <CreateUserPage />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route path="/create-user" element={<CreateUserPage />} />
               <Route path="/dashboard" element={<Index />} />
               <Route path="/cloud-connect" element={<CloudConnectionPage />} />
               <Route path="/compliance" element={<CompliancePage />} />

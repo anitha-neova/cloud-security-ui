@@ -116,12 +116,12 @@ app.include_router(onboard_cloud_router, prefix="/onboard_cloud", tags=["Onboard
 def read_root():
     return {"message": "Welcome to the AI-powered Cloud Compliance Automation API!"}
 
-@app.post("/signup")
+@app.post("/create_user")
 async def signup(user: SignupRequest):
     existing_user = users_collection.find_one({"email": user.email})
     if existing_user:
         raise HTTPException(status_code=400, detail="User already exists with this email.")
-    if user.role not in ["admin", "user", "compliance"]:
+    if user.role not in ["admin", "user"]:
         raise HTTPException(status_code=400, detail="Invalid role.")
     hashed_password = pwd_context.hash(user.password)
     users_collection.insert_one({"email": user.email, "password": hashed_password,"role": user.role})
@@ -181,7 +181,7 @@ async def login(login_request: LoginRequest):
         raise HTTPException(status_code=400, detail="Invalid email or password.")
     token_data = {"sub": user["email"]}
     access_token = create_access_token(token_data)
-    return {"access_token": access_token, "token_type": "bearer", "user_id": str(user["_id"])}
+    return {"access_token": access_token, "token_type": "bearer", "user_id": str(user["_id"]),"role":user["role"]}
 
 @app.post("/create_resource")
 async def create_resource(request: ResourceProvisionRequest):

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link,useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const UserSignupPage = () => {
+const CreateUserPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -10,15 +10,9 @@ const UserSignupPage = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [userRole,setUserRole]=useState("");
+  const [userRole, setUserRole] = useState("user");
   const navigate = useNavigate();
 
-  const handleAdminLogout = () =>{
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("user_role");
-    localStorage.removeItem("user_id");
-    navigate("/admin/login");
-  }
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
@@ -31,10 +25,12 @@ const UserSignupPage = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/signup", {
+      console.log(userRole);
+
+      const response = await axios.post("http://localhost:8000/create_user", {
         email,
         password,
-        role:userRole
+        role : userRole
       });
 
       if (response.status === 200 || response.status === 201) {
@@ -52,25 +48,44 @@ const UserSignupPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 flex items-center justify-center px-4 py-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 sm:p-12 w-full max-w-xl">
-        <div className="flex justify-end mb-2">
+    <div className="min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 flex items-center justify-center px-4 py-8">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 sm:p-12 w-full max-w-xl relative">
+        {/* Beautiful Home Button - Top Center */}
+        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
           <button
-            onClick={handleAdminLogout}
-            className="text-sm text-indigo-600 font-semibold hover:underline hover:text-indigo-800"
+            onClick={() => {
+              navigate("/dashboard");
+            }}
+            className="flex items-center gap-2 bg-white text-indigo-600 px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 font-semibold group"
           >
-            Logout
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 group-hover:-translate-x-1 transition-transform duration-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              />
+            </svg>
+            Go Home
           </button>
         </div>
-        <div className="flex flex-col items-center mb-8">
+
+        <div className="flex flex-col items-center mb-8 mt-6">
           <img
             src="/neova_solutions_logo.png"
             alt="Neova Solutions Logo"
-            className="w-21 h-21 mb-4"
+            className="w-33 h-33 mb-1 object-contain"
           />
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-1">
             neoComplianceAgent
           </h1>
+          <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-3"></div>
           <p className="text-slate-500 text-sm sm:text-base text-center">
             Create New User
           </p>
@@ -227,4 +242,4 @@ const UserSignupPage = () => {
   );
 };
 
-export default UserSignupPage;
+export default CreateUserPage;
