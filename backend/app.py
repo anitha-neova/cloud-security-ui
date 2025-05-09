@@ -104,6 +104,11 @@ class ComplianceRequest(BaseModel):
 class EmailRequest(BaseModel):
     recipient_email: str
 
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+    current_password: str
+    new_password: str
+
 app.include_router(onboard_cloud_router, prefix="/onboard_cloud", tags=["Onboarding"])
 
 @app.get("/")
@@ -118,6 +123,42 @@ async def signup(user: SignupRequest):
     hashed_password = pwd_context.hash(user.password)
     users_collection.insert_one({"email": user.email, "password": hashed_password})
     return {"message": "User created successfully!"}
+
+@app.post("/reset-password")
+async def reset_password(request: ResetPasswordRequest):
+    try:
+        user = users_collection.find_one({"email": request.email})
+        if not user:
+            logging.error(f"Password reset failed for {request.email}: User not found")
+            raise HTTPException(status_code=404, detail="User not found")
+
+        if not pwd_context.verify(request.current_password, user['password']):
+            logging.error(f"Password reset failed for {request.email}: Invalid current password")
+            raise HTTPException(status_code=400, detail="Invalid current password")
+
+        if request.current_password == request.new_password:
+            logging.error(f"Password reset failed for {request.email}: New password same as current")
+            raise HTTPException(status_code=400, detail="New password cannot be the same as current password")
+
+        password_regex = r"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$"
+        import re
+        if not re.match(password_regex, request.new_password):
+            logging.error(f"Password reset failed for {request.email}: New password does not meet requirements")
+            raise HTTPException(
+                status_code=400,
+                detail="New password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character (!@#$%^&*)"
+            )
+
+        hashed_new_password = pwd_context.hash(request.new_password)
+        users_collection.update_one(
+            {"email": request.email},
+            {"$set": {"password": hashed_new_password}}
+        )
+        logging.info(f"Password reset successful for {request.email}")
+        return {"message": "Password reset successfully"}
+    except Exception as e:
+        logging.error(f"Error in reset_password: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/login")
 async def login(login_request: LoginRequest):

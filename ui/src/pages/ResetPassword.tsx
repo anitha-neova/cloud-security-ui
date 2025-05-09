@@ -16,12 +16,24 @@ const ResetPassword = () => {
     const navigate = useNavigate();
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
         setSuccess("");
         setIsLoading(true);
+
+        if (!emailRegex.test(email)) {
+            setError("Please enter a valid email address.");
+            toast({
+                title: "Error",
+                description: "Please enter a valid email address.",
+                variant: "destructive",
+            });
+            setIsLoading(false);
+            return;
+        }
 
         if (currentPassword === newPassword) {
             setError("New password cannot be the same as the current password.");
@@ -78,8 +90,16 @@ const ResetPassword = () => {
                 });
             }
         } catch (error) {
-            const errorMessage =
-                error.response?.data?.detail || "Failed to reset password. Please try again.";
+            let errorMessage = "Failed to reset password. Please try again.";
+            if (axios.isAxiosError(error)) {
+                if (error.response?.status === 404) {
+                    errorMessage = "User not found.";
+                } else if (error.response?.status === 400) {
+                    errorMessage = error.response.data.detail;
+                } else if (error.response?.status === 500) {
+                    errorMessage = "Server error. Please try again later.";
+                }
+            }
             setError(errorMessage);
             toast({
                 title: "Error",
