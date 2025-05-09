@@ -91,15 +91,14 @@ const CreateUserPage = () => {
 
         <div className="flex flex-col items-center mb-8 mt-6">
           <img
-            src="/neova_solutions_logo.png"
-            alt="Neova Solutions Logo"
-            className="w-33 h-33 mb-1 object-contain"
+              src="/neova_solutions_logo.png"
+              alt="Neova Solutions Logo"
+              className="w-33 h-33 mb-8 object-contain"
           />
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-1">
+          <h1 className="text-3xl mb-8 font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-teal-400 dark:from-blue-400 dark:via-cyan-400 dark:to-green-300 text-center leading-snug">
             neoComplianceAgent
           </h1>
-          <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-3"></div>
-          <p className="text-slate-500 text-sm sm:text-base text-center">
+          <p className="text-slate-800 font-bold text-sm sm:text-base text-center">
             Create New User
           </p>
         </div>
