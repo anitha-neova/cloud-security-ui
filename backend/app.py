@@ -288,7 +288,7 @@ async def support_email(
     try:
         ticket_counter += 1
         timestamp = int(time.time())
-        ticket_id = f"neoComplianceAgent_{ticket_counter}_{timestamp}"
+        ticket_id = f"neoComplianceAgent_SUPPORT_{ticket_counter}_{timestamp}"
 
         msg = EmailMessage()
         msg["Subject"] = f"[{ticket_id}] {subject}"
