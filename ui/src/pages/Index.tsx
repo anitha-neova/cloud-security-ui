@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import {
   Card,
   CardContent,
@@ -28,13 +29,15 @@ const Index = () => {
   const {
     setStep,
     terraformCode,
+    apiKeySet,
     cloudConnected,
     resourceCreated,
     setCloudConnected,
     setResourceCreated,
     setTerraformCode,
     setComplianceChecked,
-    setReports
+    setReports,
+    setApiKeySet
   } = useProgress();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
@@ -71,6 +74,7 @@ const Index = () => {
 
   const handleResetProgress = () => {
     setCloudConnected(false);
+    setApiKeySet(false);
     setResourceCreated(false);
     setComplianceChecked(false);
     setTerraformCode("");
@@ -134,17 +138,34 @@ const Index = () => {
                     Describe resource configuration.
                   </p>
                 </div>
-                <Button
-                    onClick={handleNavigateToResourceCreation}
-                    disabled={!cloudConnected}
-                    className={`rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 ${
-                        cloudConnected
-                            ? "bg-blue-500 hover:bg-blue-600 text-white"
-                            : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                    }`}
-                >
-                  Create Resources
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="w-full flex justify-start">
+                        <Button
+                          onClick={handleNavigateToResourceCreation}
+                          disabled={!cloudConnected || !apiKeySet}
+                          className={`w-full rounded-lg text-sm py-1 transition-all duration-200 hover:scale-105 ${
+                            cloudConnected && apiKeySet
+                              ? "bg-blue-500 hover:bg-blue-600 text-white"
+                              : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                          }`}
+                        >
+                          Create Resources
+                        </Button>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {!cloudConnected || !apiKeySet
+                        ? cloudConnected
+                          ? "Set your OpenAI API key to enable resource creation."
+                          : apiKeySet
+                          ? "Connect your cloud account to proceed."
+                          : "Connect to cloud & set API key to enable this feature."
+                        : ""}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </CardContent>
             </Card>
 

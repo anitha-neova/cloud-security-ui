@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Initialize OpenAI client
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+#client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # Define Terraform working directory
 TERRAFORM_WORKING_DIR = os.getcwd()

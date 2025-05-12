@@ -392,6 +392,32 @@ async def ask_admin(
         logging.error(f"Failed to send inquiry email: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to send inquiry email: {str(e)}")
 
+
+@app.post("/set_openapi_key")
+def set_openai_api_key(payload: dict):
+    api_key = payload.get("api_key")
+    if not api_key:
+        raise HTTPException(status_code=400, detail="API key is required")
+
+    env_file = ".env"
+    lines = []
+
+    if os.path.exists(env_file):
+        with open(env_file, "r") as f:
+            lines = f.readlines()
+        lines = [line for line in lines if not line.strip().startswith("OPENAI_API_KEY=")]
+
+    lines.append(f"OPENAI_API_KEY={api_key}\n")
+
+    with open(env_file, "w") as f:
+        f.writelines(lines)
+
+    # ✅ Also update the running environment
+    os.environ["OPENAI_API_KEY"] = api_key
+
+    return {"message": "API key set successfully"}
+
+
 if __name__ == "__main__":
     import uvicorn
 

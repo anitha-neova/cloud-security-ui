@@ -46,6 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ promptHistory }) => {
 
   const navigation = [
     { name: "Home", href: "/dashboard", icon: Home },
+    { name: "Set OpenAI API Key", href: "/set-openai-key", icon: CirclePlus },
     { name: "Report", href: "/reports", icon: FileText },
     { name: "Support", href: "/support", icon: LifeBuoy },
     { name: "Create User", href: "/create-user", icon: CirclePlus },

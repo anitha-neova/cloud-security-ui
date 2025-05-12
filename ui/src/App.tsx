@@ -18,6 +18,7 @@ import { ProgressProvider } from "@/context/ProgressContext";
 import AdminContactPage from "./pages/AdminContactPage";
 import SignupPage from "./pages/SignupPage";
 import ResetPassword from "@/pages/ResetPassword.tsx";
+import SetOpenAIKeyPage from "./pages/SetOpenAIKeyPage";
 // import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import CreateUserPage from "./pages/CreateUserPage";
 import { AdminProtectedRoute } from "./components/AdminProtectedRoute";
@@ -70,6 +71,7 @@ const App = () => (
               />
               <Route path="/support" element={<SupportPage />} />
               <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/set-openai-key" element={<SetOpenAIKeyPage />} />
             </Route>
 
             {/* Catch-all */}
